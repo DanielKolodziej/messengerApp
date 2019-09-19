@@ -1,12 +1,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import { Login } from './Components/Login'
+import { Signup } from './Components/Signup'
+import { Dashboard } from './Components/Dashboard'
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+import { Route, BrowserRouter as Router } from 'react-router-dom';
+
+const firebase = require('firebase');
+require('firebase/firestore');
+
+firebase.initializeApp({
+    apiKey: "AIzaSyC_XhYWuIWW69sTfGqWHwEabpnfIigJWGI",
+    authDomain: "im-tutorial-99938.firebaseapp.com",
+    databaseURL: "https://im-tutorial-99938.firebaseio.com",
+    projectId: "im-tutorial-99938",
+    storageBucket: "im-tutorial-99938.appspot.com",
+    messagingSenderId: "212111501035",
+    appId: "1:212111501035:web:a24c2f1d0e3e396ae840ae"
+});
+const routing = (
+    <Router>
+        <div id='router-container'>
+            <Route path='/login' component={Login}></Route>
+            <Route path='/signup' component={Signup}></Route>
+            <Route path='/dashboard' component={Dashboard}></Route>
+        </div>
+    </Router>
+)
+
+ReactDOM.render(routing, document.getElementById('root'));
+
+

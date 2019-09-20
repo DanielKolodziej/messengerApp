@@ -85,7 +85,6 @@ export const Signup = ({ history }) => {
     const submitSignup = (e) => {
         e.preventDefault();
     
-        // if(password !== passwordConfirmation){
         if(!formIsValid){
             setSignupError('Passwords do not match!');
             return;

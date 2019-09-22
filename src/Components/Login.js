@@ -19,39 +19,39 @@ const useStyles = makeStyles(theme => ({
         marginLeft: theme.spacing(3),
         marginRight: theme.spacing(3),
         [theme.breakpoints.up(400 + theme.spacing(3) * 2)]: {
-          width: 400,
-          marginLeft: 'auto',
-          marginRight: 'auto',
+            width: 400,
+            marginLeft: 'auto',
+            marginRight: 'auto',
         },
-      },
-      paper: {
+    },
+    paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(3)}px`,
-      },
-      form: {
+    },
+    form: {
         width: '100%',
         marginTop: theme.spacing(),
-      },
-      submit: {
+    },
+    submit: {
         marginTop: theme.spacing(3),
-      },
-      noAccountHeader: {
+    },
+    noAccountHeader: {
         width: '100%'
-      },
-      signUpLink: {
+    },
+    signUpLink: {
         width: '100%',
         textDecoration: 'none',
         color: '#303f9f',
         fontWeight: 'bolder'
-      },
-      errorText: {
+    },
+    errorText: {
         color: 'red',
         textAlign: 'center'
-      }
-    }));
+    }
+}));
 
 export const Login = ({ history }) => {
     //makeStyles css
@@ -63,11 +63,11 @@ export const Login = ({ history }) => {
 
     const submitLogin = (e) => {
         e.preventDefault();
-        
+
         firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
-            .then(()=> {
+            .then(() => {
                 history.push('/dashboard');
             }, err => {
                 setServerError('Server Error');
@@ -75,40 +75,41 @@ export const Login = ({ history }) => {
             })
     }
     const userTyping = (type, e) => {
-        switch (type){
+        switch (type) {
             case 'email':
                 setEmail(e.target.value);
                 break;
             case 'password':
                 setPassword(e.target.value);
+                break;
             default:
                 break;
         }
     }
     return (
         <main className={classes.main}>
-            <CssBaseline/>
+            <CssBaseline />
             <Paper className={classes.paper}>
                 <Typography component='h1' variant='h5'>
                     Log in
                 </Typography>
                 <form className={classes.form} onSubmit={(e) => submitLogin(e)}>
                     <FormControl required fullWidth margin='normal'>
-                        <InputLabel htmlfor='login-email-input'>Enter your Email</InputLabel>
-                        <Input onChange={(e) => userTyping('email', e)} autoComplete='email' autoFocus id='login-email-input'/>
+                        <InputLabel htmlFor='login-email-input'>Enter your Email</InputLabel>
+                        <Input onChange={(e) => userTyping('email', e)} autoComplete='email' autoFocus id='login-email-input' />
                     </FormControl>
                     <FormControl required fullWidth margin='normal'>
                         <InputLabel htmlFor='login-password-input'>Enter your Password</InputLabel>
-                        <Input onChange={(e) => userTyping('password', e)} type='password' id='login-password-input'/>
+                        <Input onChange={(e) => userTyping('password', e)} type='password' id='login-password-input' />
                     </FormControl>
                     <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit}>Log in</Button>
                 </form>
-                { 
-                    serverError ? 
-                    <Typography className={classes.errorText} component='h5' variant='h6'>
-                    Incorrect Login Information
+                {
+                    serverError ?
+                        <Typography className={classes.errorText} component='h5' variant='h6'>
+                            Incorrect Login Information
                     </Typography> :
-                    null
+                        null
                 }
                 <Typography component='h5' variant='h6' className={classes.noAccountHeader}>Don't have an account?</Typography>
                 <Link className={classes.signUpLink} to='/singup'>Sign up</Link>

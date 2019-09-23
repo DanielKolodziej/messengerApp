@@ -45,6 +45,26 @@ export const Dashboard = ({ history }) => {
         firebase.auth().signOut();
     }
 
+    const buildDocKey = (friend) => {
+        return [email, friend].sort().join(':');
+    }
+    const submitMessage = (msg) => {
+        const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
+        // console.log(docKey);
+        firebase   
+            .firestore()
+            .collection('chats')
+            .doc(docKey)
+            .update({
+                messages: firebase.firestore.FieldValue.arrayUnion({
+                  sender: email,
+                  message: msg,
+                  timestamp: Date.now()
+                }),
+                receiverHasRead: false
+            });
+    }
+
     useEffect(() => {
         firebase.auth().onAuthStateChanged(async (_user) => {
             if (!_user) {
@@ -62,7 +82,7 @@ export const Dashboard = ({ history }) => {
                     })
             }
         })
-    }, []);
+    }, [history]);
 
     return (
         <div>
@@ -80,7 +100,11 @@ export const Dashboard = ({ history }) => {
                         user={email}
                         chat={chats[selectedChat]} />
             }
-            {/* <ChatTextbox /> some */}
+            {
+                selectedChat !== null && !newChatFormVisible ?
+                <ChatTextbox submitMessageFn={submitMessage}/> :
+                null
+            }
             <Button onClick={signOut} className={classes.signOutBtn}>Sign Out</Button>
         </div>
     )

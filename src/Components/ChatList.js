@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { List } from '@material-ui/core';
 import { ListItem } from '@material-ui/core';
@@ -9,7 +9,7 @@ import { Typography } from '@material-ui/core';
 import { Divider } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { ListItemIcon } from '@material-ui/core';
-import { NotificationImportant, ContactSupport } from '@material-ui/icons';
+import { NotificationImportant } from '@material-ui/icons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,8 +44,8 @@ export const ChatList = (props) => {
   const selectChat = (index) => {
     props.selectChatFn(index);
   }
-  const userIsSender = () => {
-    console.log('select chat')
+  const userIsSender = (chat) => {
+    return chat.messages[chat.messages.length - 1].sender === props.userEmail;
   }
 
   if (props.chats.length > 0) {

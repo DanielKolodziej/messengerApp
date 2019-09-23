@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { TextField } from '@material-ui/core';
-import { Send } from '@material-ui/core';
+import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
@@ -28,13 +28,39 @@ const useStyles = makeStyles({
 
 });
 
-export const ChatTextbox = () => {
+export const ChatTextbox = (props) => {
 
     const classes = useStyles();
 
+    const [chatText, setChatText] = useState('')
+
+    const userTyping = (e) => {
+        console.log('user typing');
+        e.keyCode === 13 ? submitMessage() :
+        setChatText(e.target.value);
+    }
+    const userClickedInput = () => {
+        console.log('clicked input');
+    }
+    const messageValid = (txt) => {
+        return txt && txt.replace(/\s/g, '').length;
+    }
+    const submitMessage = () => {
+        if(messageValid(chatText)){
+            console.log('submit');
+            props.submitMessageFn(chatText)
+            document.getElementById('chattextbox').value = '';
+        }
+    }
     return (
         <div className={classes.chatTextBoxContainer}>
-            chattextbox
+            <TextField 
+                onKeyUp={(e)=> userTyping(e)}
+                id='chattextbox'
+                className={classes.chatTextBox}
+                onFocus={userClickedInput}
+                placeholder="Type your message"/>
+            <Send onClick={submitMessage} className={classes.sendBtn}/>
         </div>
     )
 }

@@ -51,7 +51,7 @@ export const ChatList = (props) => {
   if (props.chats.length > 0) {
     return (
       <main className={classes.root}>
-        <Button onClick={newChat} className={classes.newChatBtn} variant='contained' fullWidth color='primary'>test</Button>
+        <Button onClick={newChat} className={classes.newChatBtn} variant='contained' fullWidth color='primary'>New Message</Button>
         <List>
           {
             props.chats.map((_chat, _index) => {

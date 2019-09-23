@@ -46,7 +46,7 @@ export const Dashboard = ({ history }) => {
     }
 
     const buildDocKey = (friend) => {
-        return [email, friend].sort().join(':');
+        return [email, friend].sort().join(';');
     }
     const submitMessage = (msg) => {
         const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);

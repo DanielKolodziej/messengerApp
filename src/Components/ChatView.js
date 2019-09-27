@@ -62,7 +62,7 @@ export const ChatView = (props) => {
     useEffect(() => {
         //useEffect to scroll chatView window component to the bottom
         const container = document.getElementById('chatview-container');
-        if (container) {
+        if (container) { //issue in microsoft edge
             container.scrollTo(0, container.scrollHeight);
         }
     }, [props.chat]) //not 100% sure on the dependency but seems to be working

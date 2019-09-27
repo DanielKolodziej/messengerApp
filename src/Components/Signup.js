@@ -57,31 +57,24 @@ export const Signup = ({ history }) => {
 
     const classes = useStyles();
 
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
-    const [passwordConfirmation, setPasswordConfirmation] = useState(null);
+    const [signup, setSignup]=useState({
+        email: null,
+        password: null,
+        passwordConfirmation: null
+    })
     const [signupError, setSignupError] = useState('');
 
     
     const formIsValid = () => (
-        password === passwordConfirmation
+        signup.password === signup.passwordConfirmation
     )
-    const userTyping = (type, e) => {
-        switch (type) {
-            case 'email':
-                setEmail(e.target.value);
-                break;
-            case 'password':
-                setPassword(e.target.value);
-                break;
-            case 'passwordConfirmation':
-                setPasswordConfirmation(e.target.value);
-                break;
-            
-                default:
-                    break;
-        }
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+    
+        setSignup({...signup, [name]: value});   
+        console.log(signup); 
     }
+
     const submitSignup = (e) => {
         e.preventDefault();
     
@@ -90,11 +83,11 @@ export const Signup = ({ history }) => {
             return;
         }
 
-        console.log(`Email: ${email}, Pass: ${password}, Conf: ${passwordConfirmation}, Err: ${signupError}`);
+        console.log(`Email: ${signup.email}, Pass: ${signup.password}, Conf: ${signup.passwordConfirmation}, Err: ${signupError}`);
 
         firebase
             .auth()
-            .createUserWithEmailAndPassword(email, password)
+            .createUserWithEmailAndPassword(signup.email, signup.password)
             .then(authres => {
                 const userObj = {
                     email: authres.user.email,
@@ -102,17 +95,17 @@ export const Signup = ({ history }) => {
                 firebase    
                     .firestore()
                     .collection('users')
-                    .doc(email)
+                    .doc(signup.email)
                     .set(userObj)
                     .then(()=> {
                         history.push('/dashboard');
                     }, dbErr => {
                         console(dbErr);
-                        setSignupError('Failed to add user');
+                        setSignupError(dbErr.message);
                     })
             }, authErr => {
                 console.log(authErr);
-                setSignupError('Failed to add user');
+                setSignupError(authErr.message);
             })
     }
 
@@ -126,15 +119,15 @@ export const Signup = ({ history }) => {
                 <form onSubmit={(e) => submitSignup(e)} className={classes.form}>
                     <FormControl required fullWidth margin='normal'>
                         <InputLabel htmlFor='sign-email-input'>Enter your Email</InputLabel> 
-                        <Input onChange={(e) => userTyping('email', e)} autoComplete='email' autoFocus id='signup-email-input'></Input>
+                        <Input onChange={handleInputChange} name='email' autoComplete='email' autoFocus id='signup-email-input'></Input>
                     </FormControl>
                     <FormControl required fullWidth margin='normal'>
                         <InputLabel htmlFor='signup-password-input'>Create a Password</InputLabel>
-                        <Input onChange={(e) => userTyping('password', e)} type='password' id='signup-password-input'></Input>
+                        <Input onChange={handleInputChange} name='password' type='password' id='signup-password-input'></Input>
                     </FormControl>
                     <FormControl required fullWidth margin='normal'>
                         <InputLabel htmlFor='signup-password-confirmation-input'>Confirm Password</InputLabel>
-                        <Input onChange={(e) => userTyping('passwordConfirmation', e)} type='password' id='signup-password-confirmation-input'></Input>
+                        <Input onChange={handleInputChange} name='passwordConfirmation' type='password' id='signup-password-confirmation-input'></Input>
                     </FormControl>
                     <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit}>Submit</Button>
                 </form>

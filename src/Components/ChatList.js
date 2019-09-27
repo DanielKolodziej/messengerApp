@@ -38,12 +38,6 @@ export const ChatList = (props) => {
 
   const classes = useStyles();
 
-  const newChat = () => {
-    props.newChatBtnFn();
-  }
-  const selectChat = (index) => {
-    props.selectChatFn(index);
-  }
   const userIsSender = (chat) => {
     return chat.messages[chat.messages.length - 1].sender === props.userEmail;
   }
@@ -51,13 +45,13 @@ export const ChatList = (props) => {
   if (props.chats.length > 0) {
     return (
       <main className={classes.root}>
-        <Button onClick={newChat} className={classes.newChatBtn} variant='contained' fullWidth color='primary'>New Message</Button>
+        <Button onClick={props.newChatBtnFn()} className={classes.newChatBtn} variant='contained' fullWidth color='primary'>New Message</Button>
         <List>
           {
             props.chats.map((_chat, _index) => {
               return (
                 <div key={_index}>
-                  <ListItem onClick={() => selectChat(_index)}
+                  <ListItem onClick={() => props.selectChatFn(_index)}
                     className={classes.listItem}
                     selected={props.selectedChatIndex === _index}
                     alignItems="flex-start">
@@ -94,7 +88,7 @@ export const ChatList = (props) => {
         <Button variant='contained'
           fullWidth
           color='primary'
-          onClick={newChat}
+          onClick={props.newChatBtnFn()}
           className={classes.newChatBtn}>
           New Message</Button>
         <List />

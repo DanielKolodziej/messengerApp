@@ -70,21 +70,15 @@ export const Login = ({ history }) => {
             .then(() => {
                 history.push('/dashboard');
             }, err => {
-                setServerError('Server Error');
+                setServerError(err.message);
                 console.log(err);
             })
     }
-    const userTyping = (type, e) => {
-        switch (type) {
-            case 'email':
-                setEmail(e.target.value);
-                break;
-            case 'password':
-                setPassword(e.target.value);
-                break;
-            default:
-                break;
-        }
+
+    const handleInputChange = (e) => {
+        const { name, value} = e.target;
+
+        name==='email' ? setEmail(value) : setPassword(value);
     }
     return (
         <main className={classes.main}>
@@ -96,23 +90,23 @@ export const Login = ({ history }) => {
                 <form className={classes.form} onSubmit={(e) => submitLogin(e)}>
                     <FormControl required fullWidth margin='normal'>
                         <InputLabel htmlFor='login-email-input'>Enter your Email</InputLabel>
-                        <Input onChange={(e) => userTyping('email', e)} autoComplete='email' autoFocus id='login-email-input' />
+                        <Input onChange={handleInputChange} name='email' autoComplete='email' autoFocus id='login-email-input' />
                     </FormControl>
                     <FormControl required fullWidth margin='normal'>
                         <InputLabel htmlFor='login-password-input'>Enter your Password</InputLabel>
-                        <Input onChange={(e) => userTyping('password', e)} type='password' id='login-password-input' />
+                        <Input onChange={handleInputChange}name='password' type='password' id='login-password-input' />
                     </FormControl>
                     <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit}>Log in</Button>
                 </form>
                 {
                     serverError ?
                         <Typography className={classes.errorText} component='h5' variant='h6'>
-                            Incorrect Login Information
+                            {serverError}
                     </Typography> :
                         null
                 }
                 <Typography component='h5' variant='h6' className={classes.noAccountHeader}>Don't have an account?</Typography>
-                <Link className={classes.signUpLink} to='/singup'>Sign up</Link>
+                <Link className={classes.signUpLink} to='/signup'>Sign up</Link>
             </Paper>
         </main>
     )

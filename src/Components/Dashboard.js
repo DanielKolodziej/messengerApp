@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { ChatList } from './ChatList';
 import { ChatView } from './ChatView';
 import { ChatTextbox } from './ChatTextbox';
+import { NewChat } from './NewChat';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -32,25 +33,49 @@ export const Dashboard = ({ history }) => {
     const [email, setEmail] = useState(null);
     const [chats, setChats] = useState([]);
 
-    const newChatBtnClicked = () => {
-        setNewChatFormVisible(true);
-        setSelectedChat(null);
+    const selectChat = async (chatIndex) => {
+        // console.log(chatIndex)
+        await setSelectedChat(chatIndex);
+        await setNewChatFormVisible(false);
+        messageRead(chatIndex);
     }
 
-    const selectChat = (chatIndex) => {
-        setSelectedChat(chatIndex)
+    const newChatBtnClicked = () => {
+        // setNewChatFormVisible(true);
+        // setSelectedChat(null);
+    }
+    
+    const buildDocKey = (friend) => {
+        return [email, friend].sort().join(';');
+    }
+
+    const clickedMessageWhereNotSender = (chatIndex) => {
+        return chats[chatIndex].messages[chats[chatIndex].messages.length - 1].sender !== email;
+    }
+    const messageRead = (index) => {
+        // ---HAVING ISSUE WITH selectedChat state!!!---
+        
+        const docKey = buildDocKey(chats[index].users.filter(_usr => _usr !== email)[0]);
+        console.log('docKey', docKey);
+        if(clickedMessageWhereNotSender(index)) {
+          firebase
+            .firestore()
+            .collection('chats')
+            .doc(docKey)
+            .update({ receiverHasRead: true });
+        } else {
+          console.log('Clicked message where the user was the sender');
+        }
     }
 
     const signOut = () => {
         firebase.auth().signOut();
     }
 
-    const buildDocKey = (friend) => {
-        return [email, friend].sort().join(';');
-    }
     const submitMessage = (msg) => {
-        const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
-        // console.log(docKey);
+        const docKey = buildDocKey(chats[selectedChat]
+            .users.filter(_usr => _usr !== email)[0]);
+        
         firebase   
             .firestore()
             .collection('chats')
@@ -63,6 +88,31 @@ export const Dashboard = ({ history }) => {
                 }),
                 receiverHasRead: false
             });
+    }
+    const goToChat = async (docKey, msg) => {
+        const usersInChat = docKey.split(';');
+        const chat = chats.find(_chat => usersInChat.every(_user => _chat.users.includes(_user)));
+        setNewChatFormVisible(false);
+        await selectChat(chats.indexOf(chat));
+        submitMessage(msg);
+    }
+
+    const newChatSubmit = async (chatObj) => {
+        const docKey = buildDocKey(chatObj.sendTo);
+        await firebase  
+            .firestore()
+            .collection('chats')
+            .doc(docKey)
+            .set({
+                receiverHasRead: false,
+                users: [email, chatObj.sendTo],
+                messages: [{
+                    message: chatObj.message,
+                    sender: email
+                }]
+            })
+        setNewChatFormVisible(false);
+        selectChat(chats.length - 1);
     }
 
     useEffect(() => {
@@ -84,28 +134,50 @@ export const Dashboard = ({ history }) => {
         })
     }, [history]);
 
-    return (
-        <div>
-            <ChatList
-                history={history}
-                newChatBtnFn={newChatBtnClicked}
-                selectChatFn={selectChat}
-                chats={chats}
-                userEmail={email}
-                selectedChatIndex={selectedChat} />
-            {
-                newChatFormVisible ?
-                    null :
-                    <ChatView
-                        user={email}
-                        chat={chats[selectedChat]} />
-            }
-            {
-                selectedChat !== null && !newChatFormVisible ?
-                <ChatTextbox submitMessageFn={submitMessage}/> :
-                null
-            }
-            <Button onClick={signOut} className={classes.signOutBtn}>Sign Out</Button>
-        </div>
-    )
+    useEffect(() => {
+        return () => {
+        //   console.log('newChatFormVisible', newChatFormVisible);
+        //   console.log('selectedChat', selectedChat);
+          console.log("cleaned up");
+        };
+      }, []);
+
+    if (email){
+        // console.log(newChatFormVisible);
+        return (
+            <div id='dashboard-container'>
+                <ChatList
+                    history={history}
+                    newChatBtnFn={newChatBtnClicked}
+                    selectChatFn={selectChat}
+                    chats={chats}
+                    userEmail={email}
+                    selectedChatIndex={selectedChat} />
+                {
+                    newChatFormVisible ?
+                        null :
+                        <ChatView
+                            user={email}
+                            chat={chats[selectedChat]} />
+                }
+                {
+                    selectedChat !== null && !newChatFormVisible ?
+                    <ChatTextbox submitMessageFn={submitMessage}
+                        messageReadFn={messageRead}/> :
+                    null
+                }
+                {
+                    newChatFormVisible ? 
+                    <NewChat goToChatFn={goToChat} 
+                        newChatSubmitFn={newChatSubmit}/> :
+                    null
+                }
+                <Button onClick={signOut} className={classes.signOutBtn}>Sign Out</Button>
+            </div>
+        )
+    } else {
+        return(
+            <div>Loading...</div>
+        )
+    }
 }

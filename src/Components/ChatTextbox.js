@@ -41,6 +41,7 @@ export const ChatTextbox = (props) => {
     }
     const userClickedInput = () => {
         console.log('clicked input');
+        props.messageReadFn();
     }
     const messageValid = (txt) => {
         return txt && txt.replace(/\s/g, '').length;

@@ -32,17 +32,20 @@ export const Dashboard = ({ history }) => {
     const [newChatFormVisible, setNewChatFormVisible] = useState(false);
     const [email, setEmail] = useState(null);
     const [chats, setChats] = useState([]);
+    const [keyDoc, setKeyDoc] =useState(null);
 
     const selectChat = async (chatIndex) => {
-        // console.log(chatIndex)
-        await setSelectedChat(chatIndex);
-        await setNewChatFormVisible(false);
-        messageRead(chatIndex);
+        console.log('selectedChat fired!');
+        console.log('chatIndex in selectChat',chatIndex)
+        // await setSelectedChat(chatIndex);
+        // await setNewChatFormVisible(false);
+        // messageRead();
     }
 
     const newChatBtnClicked = () => {
-        // setNewChatFormVisible(true);
-        // setSelectedChat(null);
+        setNewChatFormVisible(true);
+        setSelectedChat(null);
+        console.log('newChatBtnClicked fired!');
     }
     
     const buildDocKey = (friend) => {
@@ -52,20 +55,21 @@ export const Dashboard = ({ history }) => {
     const clickedMessageWhereNotSender = (chatIndex) => {
         return chats[chatIndex].messages[chats[chatIndex].messages.length - 1].sender !== email;
     }
-    const messageRead = (index) => {
+    const messageRead = () => {
         // ---HAVING ISSUE WITH selectedChat state!!!---
-        
-        const docKey = buildDocKey(chats[index].users.filter(_usr => _usr !== email)[0]);
-        console.log('docKey', docKey);
-        if(clickedMessageWhereNotSender(index)) {
-          firebase
-            .firestore()
-            .collection('chats')
-            .doc(docKey)
-            .update({ receiverHasRead: true });
-        } else {
-          console.log('Clicked message where the user was the sender');
-        }
+        console.log('messageRead fired!');
+        // const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
+        // setKeyDoc(docKey);
+        // console.log('docKey', docKey);
+        // if(clickedMessageWhereNotSender(selectedChat)) {
+        //   firebase
+        //     .firestore()
+        //     .collection('chats')
+        //     .doc(docKey)
+        //     .update({ receiverHasRead: true });
+        // } else {
+        //   console.log('Clicked message where the user was the sender');
+        // }
     }
 
     const signOut = () => {
@@ -73,13 +77,14 @@ export const Dashboard = ({ history }) => {
     }
 
     const submitMessage = (msg) => {
-        const docKey = buildDocKey(chats[selectedChat]
-            .users.filter(_usr => _usr !== email)[0]);
+        // const docKey = buildDocKey(chats[selectedChat]
+        //     .users.filter(_usr => _usr !== email)[0]);
         
         firebase   
             .firestore()
             .collection('chats')
-            .doc(docKey)
+            // .doc(docKey)
+            .doc(keyDoc)
             .update({
                 messages: firebase.firestore.FieldValue.arrayUnion({
                   sender: email,
@@ -148,8 +153,8 @@ export const Dashboard = ({ history }) => {
             <div id='dashboard-container'>
                 <ChatList
                     history={history}
-                    newChatBtnFn={newChatBtnClicked}
-                    selectChatFn={selectChat}
+                    newChatBtnClicked={newChatBtnClicked}
+                    selectChat={selectChat}
                     chats={chats}
                     userEmail={email}
                     selectedChatIndex={selectedChat} />
@@ -162,8 +167,8 @@ export const Dashboard = ({ history }) => {
                 }
                 {
                     selectedChat !== null && !newChatFormVisible ?
-                    <ChatTextbox submitMessageFn={submitMessage}
-                        messageReadFn={messageRead}/> :
+                    <ChatTextbox submitMessage={submitMessage}
+                        messageRead={messageRead}/> :
                     null
                 }
                 {

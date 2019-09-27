@@ -34,34 +34,34 @@ export const ChatTextbox = (props) => {
 
     const [chatText, setChatText] = useState('')
 
-    const userTyping = (e) => {
-        console.log('user typing');
-        e.keyCode === 13 ? submitMessage() :
-        setChatText(e.target.value);
-    }
-    const userClickedInput = () => {
-        console.log('clicked input');
-        props.messageReadFn();
-    }
+
     const messageValid = (txt) => {
         return txt && txt.replace(/\s/g, '').length;
     }
-    const submitMessage = () => {
+    const submitValidMessage = () => {
         if(messageValid(chatText)){
             console.log('submit');
-            props.submitMessageFn(chatText)
-            document.getElementById('chattextbox').value = '';
+            props.submitMessage(chatText);
+            setChatText('');
+            // document.getElementById('chattextbox').value = '';
         }
     }
+    const userTyping = (e) => {
+        console.log('user typing');
+        e.keyCode === 13 ? submitValidMessage() :
+        setChatText(e.target.value);
+    }
+
     return (
         <div className={classes.chatTextBoxContainer}>
             <TextField 
                 onKeyUp={(e)=> userTyping(e)}
                 id='chattextbox'
                 className={classes.chatTextBox}
-                onFocus={userClickedInput}
+                // onFocus={() => props.messageRead} works
+                onFocus={() => props.messageRead()}
                 placeholder="Type your message"/>
-            <Send onClick={submitMessage} className={classes.sendBtn}/>
+            <Send onClick={() => submitValidMessage()} className={classes.sendBtn}/>
         </div>
     )
 }

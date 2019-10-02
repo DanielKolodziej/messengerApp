@@ -63,7 +63,7 @@ export const NewChat = (props) => {
             .map(_doc => {
                 if (_doc !== props.sender) {
                     return _doc.data().email
-                }
+                } return null;
             })
             .includes(username);
         return exists;

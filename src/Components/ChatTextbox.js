@@ -42,8 +42,8 @@ export const ChatTextbox = (props) => {
         if(messageValid(chatText)){
             console.log('submit');
             props.submitMessage(chatText);
-            setChatText('');
-            // document.getElementById('chattextbox').value = '';
+            // setChatText('');
+            document.getElementById('chattextbox').value = '';
         }
     }
     const userTyping = (e) => {
@@ -59,7 +59,7 @@ export const ChatTextbox = (props) => {
                 id='chattextbox'
                 className={classes.chatTextBox}
                 // onFocus={() => props.messageRead} works
-                onFocus={() => props.messageRead()}
+                // onFocus={() => props.messageRead()}
                 placeholder="Type your message"/>
             <Send onClick={() => submitValidMessage()} className={classes.sendBtn}/>
         </div>

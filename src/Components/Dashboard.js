@@ -38,16 +38,14 @@ export const Dashboard = ({ history }) => {
         console.log('chatIndex in selectChat', chatIndex)
         await setSelectedChat(chatIndex);
         await setNewChatFormVisible(false);
-        messageRead();
+        await messageRead();
     }
 
-    useEffect(() => {
-        console.log('selectedChat is:', selectedChat);
-        console.log('chats[selectedChat] is:', chats[selectedChat]);
-        const delay = setInterval(() => {
-            console.log(chats[selectedChat].users);
-        }, 5000)
-    }, [selectedChat, chats])
+    // useEffect(() => {
+    //     console.log('selectedChat is:', selectedChat);
+    //     console.log('chats[selectedChat] is:', chats[selectedChat]);
+    //     selectChat(selectedChat);
+    // }, [selectedChat, chats])
 
 
     const newChatBtnClicked = () => {
@@ -69,17 +67,17 @@ export const Dashboard = ({ history }) => {
         console.log('original messageRead fired!');
         //console.log(selectedChat);
         // console.log('messageRead chats users----', chats[selectedChat].users);
-        // const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
+        const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
         // console.log('docKey', docKey);
-        // if(clickedMessageWhereNotSender(selectedChat)) {
-        //   firebase
-        //     .firestore()
-        //     .collection('chats')
-        //     .doc(docKey)
-        //     .update({ receiverHasRead: true });
-        // } else {
-        //   console.log('Clicked message where the user was the sender');
-        // }
+        if(clickedMessageWhereNotSender(selectedChat)) {
+          firebase
+            .firestore()
+            .collection('chats')
+            .doc(docKey)
+            .update({ receiverHasRead: true });
+        } else {
+          console.log('Clicked message where the user was the sender');
+        }
     }
 
     const signOut = () => {
@@ -151,6 +149,7 @@ export const Dashboard = ({ history }) => {
             console.log("cleaned up");
         }
     }, [history]);
+    //selectedChat added as dependency for change in order to trigger a rerender and work correctly
 
     if (email) {
         return (
@@ -172,7 +171,8 @@ export const Dashboard = ({ history }) => {
                 {
                     selectedChat !== null && !newChatFormVisible ?
                         <ChatTextbox submitMessage={submitMessage}
-                            messageRead={messageRead} /> :
+                            messageRead={messageRead} 
+                            /> :
                         null
                 }
                 {

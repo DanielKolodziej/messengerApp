@@ -7,37 +7,37 @@ const firebase = require("firebase");
 
 const useStyles = makeStyles(theme => ({
     main: {
-      width: 'auto',
-      display: 'block', // Fix IE 11 issue.
-      marginLeft: theme.spacing(3),
-      marginRight: theme.spacing(3),
-      [theme.breakpoints.up(400 + theme.spacing(3) * 2)]: {
-        width: 400,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-      },
+        width: 'auto',
+        display: 'block', // Fix IE 11 issue.
+        marginLeft: theme.spacing(3),
+        marginRight: theme.spacing(3),
+        [theme.breakpoints.up(400 + theme.spacing(3) * 2)]: {
+            width: 400,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
     },
     paper: {
-      padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(3)}px`,
-      position: 'absolute',
-      width: '350px',
-      top: '50px',
-      left: 'calc(50% + 150px - 175px)'
+        padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(3)}px`,
+        position: 'absolute',
+        width: '350px',
+        top: '50px',
+        left: 'calc(50% + 150px - 175px)'
     },
     input: {
     },
     form: {
-      width: '100%',
-      marginTop: theme.spacing(),
+        width: '100%',
+        marginTop: theme.spacing(),
     },
     submit: {
-      marginTop: theme.spacing(3),
+        marginTop: theme.spacing(3),
     },
     errorText: {
-      color: 'red',
-      textAlign: 'center'
+        color: 'red',
+        textAlign: 'center'
     }
-  }));
+}));
 
 export const NewChat = (props) => {
 
@@ -45,18 +45,12 @@ export const NewChat = (props) => {
 
     const [username, setUsername] = useState(null);
     const [message, setMessage] = useState(null);
+    const [serverError, setServerError] = useState('');
 
-    const userTyping = (type, e) => {
-        switch (type) {
-            case 'username':
-                setUsername(e.target.value);
-                break;
-            case 'message':
-                setMessage(e.target.value)
-                break;
-            default:
-                break;
-        }
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        name === 'username' ? setUsername(value) : setMessage(value);
     }
 
     const userExists = async () => {
@@ -66,9 +60,12 @@ export const NewChat = (props) => {
             .get();
         const exists = usersSnapshot
             .docs
-            .map(_doc => _doc.data().email)
+            .map(_doc => {
+                if (_doc !== props.sender) {
+                    return _doc.data().email
+                }
+            })
             .includes(username);
-        // setSer
         return exists;
     }
     const buildDocKey = () => {
@@ -85,28 +82,28 @@ export const NewChat = (props) => {
         return chat.exists;
     }
 
-    const createChat = () => {
-        props.newChatSubmitFn({
-            sendTo: username,
-            message: message
-        })
-    }
-    const goToChat = () => {
-        props.goToChatFn(buildDocKey(), message);
-    }
-
     const submitNewChat = async (e) => {
         e.preventDefault();
+        console.log('submitNewChat fired!')
         const user = await userExists();
-        if (user){
+        console.log(user);
+        if (user) {
             const chatExist = await chatExists();
-            chatExist ? goToChat() : createChat();
+            console.log(chatExist);
+            chatExist ?
+                props.goToChat(buildDocKey(), message) :
+                props.newChatSubmit({
+                    sendTo: username,
+                    message: message
+                });
+        } else {
+            setServerError('User does not exist')
         }
     }
 
     return (
         <main className={classes.main}>
-            <CssBaseline/>
+            <CssBaseline />
             <Paper className={classes.paper}>
                 <Typography component='h1' variant='h5'>Send a Message</Typography>
                 <form onSubmit={(e) => submitNewChat(e)} className={classes.form}>
@@ -114,22 +111,32 @@ export const NewChat = (props) => {
                         <InputLabel htmlFor='new-chat-username'>
                             Enter your friend's email
                         </InputLabel>
-                        <Input required 
+                        <Input required
+                            name='username'
                             className={classes.input}
                             autoFocus
-                            onChange={(e) => userTyping('username', e)}
-                            id='new-chat-username'/>
+                            onChange={handleInputChange}
+                            id='new-chat-username' />
                     </FormControl>
                     <FormControl fullWidth>
                         <InputLabel htmlFor='new-chat-message'>
                             Enter your message
                         </InputLabel>
-                        <Input required className={classes.input}
-                            onChange={(e) => userTyping('message', e)}
-                            id='new-chat-message'/>
+                        <Input required
+                            name='message'
+                            className={classes.input}
+                            onChange={handleInputChange}
+                            id='new-chat-message' />
                     </FormControl>
-                    <Button fullWidth 
-                        className={classes.submit} 
+                    {
+                        serverError ?
+                            <Typography className={classes.errorText} component='h5' variant='h6'>
+                                {serverError}
+                            </Typography> :
+                            null
+                    }
+                    <Button fullWidth
+                        className={classes.submit}
                         variant='contained'
                         color='primary'
                         type='submit'>Send</Button>
@@ -137,4 +144,4 @@ export const NewChat = (props) => {
             </Paper>
         </main>
     )
-  }
+}

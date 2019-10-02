@@ -32,22 +32,30 @@ export const Dashboard = ({ history }) => {
     const [newChatFormVisible, setNewChatFormVisible] = useState(false);
     const [email, setEmail] = useState(null);
     const [chats, setChats] = useState([]);
-    const [keyDoc, setKeyDoc] =useState(null);
 
     const selectChat = async (chatIndex) => {
         console.log('selectedChat fired!');
-        console.log('chatIndex in selectChat',chatIndex)
-        // await setSelectedChat(chatIndex);
-        // await setNewChatFormVisible(false);
-        // messageRead();
+        console.log('chatIndex in selectChat', chatIndex)
+        await setSelectedChat(chatIndex);
+        await setNewChatFormVisible(false);
+        messageRead();
     }
+
+    useEffect(() => {
+        console.log('selectedChat is:', selectedChat);
+        console.log('chats[selectedChat] is:', chats[selectedChat]);
+        const delay = setInterval(() => {
+            console.log(chats[selectedChat].users);
+        }, 5000)
+    }, [selectedChat, chats])
+
 
     const newChatBtnClicked = () => {
         setNewChatFormVisible(true);
         setSelectedChat(null);
         console.log('newChatBtnClicked fired!');
     }
-    
+
     const buildDocKey = (friend) => {
         return [email, friend].sort().join(';');
     }
@@ -55,11 +63,13 @@ export const Dashboard = ({ history }) => {
     const clickedMessageWhereNotSender = (chatIndex) => {
         return chats[chatIndex].messages[chats[chatIndex].messages.length - 1].sender !== email;
     }
+
     const messageRead = () => {
         // ---HAVING ISSUE WITH selectedChat state!!!---
-        console.log('messageRead fired!');
+        console.log('original messageRead fired!');
+        //console.log(selectedChat);
+        // console.log('messageRead chats users----', chats[selectedChat].users);
         // const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
-        // setKeyDoc(docKey);
         // console.log('docKey', docKey);
         // if(clickedMessageWhereNotSender(selectedChat)) {
         //   firebase
@@ -77,19 +87,18 @@ export const Dashboard = ({ history }) => {
     }
 
     const submitMessage = (msg) => {
-        // const docKey = buildDocKey(chats[selectedChat]
-        //     .users.filter(_usr => _usr !== email)[0]);
-        
-        firebase   
+        const docKey = buildDocKey(chats[selectedChat]
+            .users.filter(_usr => _usr !== email)[0]);
+
+        firebase
             .firestore()
             .collection('chats')
-            // .doc(docKey)
-            .doc(keyDoc)
+            .doc(docKey)
             .update({
                 messages: firebase.firestore.FieldValue.arrayUnion({
-                  sender: email,
-                  message: msg,
-                  timestamp: Date.now()
+                    sender: email,
+                    message: msg,
+                    timestamp: Date.now()
                 }),
                 receiverHasRead: false
             });
@@ -104,7 +113,7 @@ export const Dashboard = ({ history }) => {
 
     const newChatSubmit = async (chatObj) => {
         const docKey = buildDocKey(chatObj.sendTo);
-        await firebase  
+        await firebase
             .firestore()
             .collection('chats')
             .doc(docKey)
@@ -137,18 +146,13 @@ export const Dashboard = ({ history }) => {
                     })
             }
         })
+
+        return function cleanup() {
+            console.log("cleaned up");
+        }
     }, [history]);
 
-    useEffect(() => {
-        return () => {
-        //   console.log('newChatFormVisible', newChatFormVisible);
-        //   console.log('selectedChat', selectedChat);
-          console.log("cleaned up");
-        };
-      }, []);
-
-    if (email){
-        // console.log(newChatFormVisible);
+    if (email) {
         return (
             <div id='dashboard-container'>
                 <ChatList
@@ -167,21 +171,23 @@ export const Dashboard = ({ history }) => {
                 }
                 {
                     selectedChat !== null && !newChatFormVisible ?
-                    <ChatTextbox submitMessage={submitMessage}
-                        messageRead={messageRead}/> :
-                    null
+                        <ChatTextbox submitMessage={submitMessage}
+                            messageRead={messageRead} /> :
+                        null
                 }
                 {
-                    newChatFormVisible ? 
-                    <NewChat goToChatFn={goToChat} 
-                        newChatSubmitFn={newChatSubmit}/> :
-                    null
+                    newChatFormVisible ?
+                        <NewChat
+                            sender={email}
+                            goToChat={goToChat}
+                            newChatSubmit={newChatSubmit} /> :
+                        null
                 }
-                <Button onClick={signOut} className={classes.signOutBtn}>Sign Out</Button>
+                <Button onClick={() => signOut()} className={classes.signOutBtn}>Sign Out</Button>
             </div>
         )
     } else {
-        return(
+        return (
             <div>Loading...</div>
         )
     }

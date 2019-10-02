@@ -42,6 +42,7 @@ export const ChatList = (props) => {
     return chat.messages[chat.messages.length - 1].sender === props.userEmail;
   }
 
+  console.log(props)
   if (props.chats.length > 0) {
     return (
       <main className={classes.root}>
@@ -51,7 +52,8 @@ export const ChatList = (props) => {
             props.chats.map((_chat, _index) => {
               return (
                 <div key={_index}>
-                  <ListItem onClick={() => props.selectChat(_index)}
+                  <ListItem
+                    onClick={() => props.selectChat(_index)}
                     className={classes.listItem}
                     selected={props.selectedChatIndex === _index}
                     alignItems="flex-start">

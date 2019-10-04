@@ -44,7 +44,6 @@ export const Dashboard = ({ history }) => {
     // useEffect(() => {
     //     console.log('selectedChat is:', selectedChat);
     //     console.log('chats[selectedChat] is:', chats[selectedChat]);
-    //     selectChat(selectedChat);
     // }, [selectedChat, chats])
 
 
@@ -63,21 +62,37 @@ export const Dashboard = ({ history }) => {
     }
 
     const messageRead = () => {
-        // ---HAVING ISSUE WITH selectedChat state!!!---
-        console.log('original messageRead fired!');
-        //console.log(selectedChat);
-        // console.log('messageRead chats users----', chats[selectedChat].users);
-        const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
-        // console.log('docKey', docKey);
-        if(clickedMessageWhereNotSender(selectedChat)) {
-          firebase
-            .firestore()
-            .collection('chats')
-            .doc(docKey)
-            .update({ receiverHasRead: true });
+        // ---HAVING ISSUE WITH selectedChat state being call as null---
+        // one render behind
+
+        //if statment to check for not null -> bypass the above issue
+        if (selectedChat != null){
+            console.log('currently.....',selectedChat)
+            const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
+        
+            if(clickedMessageWhereNotSender(selectedChat)) {
+            firebase
+                .firestore()
+                .collection('chats')
+                .doc(docKey)
+                .update({ receiverHasRead: true });
+                } else {
+                console.log('Clicked message where the user was the sender');
+            }
         } else {
-          console.log('Clicked message where the user was the sender');
+            console.log('selectedChat is null and hasnt updated for some reason.')
         }
+        // const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
+        // // // console.log('docKey', docKey);
+        // if(clickedMessageWhereNotSender(selectedChat)) {
+        //   firebase
+        //     .firestore()
+        //     .collection('chats')
+        //     .doc(docKey)
+        //     .update({ receiverHasRead: true });
+        // } else {
+        //   console.log('Clicked message where the user was the sender');
+        // }
     }
 
     const signOut = () => {
@@ -85,27 +100,55 @@ export const Dashboard = ({ history }) => {
     }
 
     const submitMessage = (msg) => {
-        const docKey = buildDocKey(chats[selectedChat]
-            .users.filter(_usr => _usr !== email)[0]);
+        console.log('submitMessage Fired!');
+        if (selectedChat != null){
+            const docKey = buildDocKey(chats[selectedChat]
+                .users.filter(_usr => _usr !== email)[0]);
+    
+            firebase
+                .firestore()
+                .collection('chats')
+                .doc(docKey)
+                .update({
+                    messages: firebase.firestore.FieldValue.arrayUnion({
+                        sender: email,
+                        message: msg,
+                        timestamp: Date.now()
+                    }),
+                    receiverHasRead: false
+                });
+        } else {
+            console.log('selectedChat is null')
+        }
 
-        firebase
-            .firestore()
-            .collection('chats')
-            .doc(docKey)
-            .update({
-                messages: firebase.firestore.FieldValue.arrayUnion({
-                    sender: email,
-                    message: msg,
-                    timestamp: Date.now()
-                }),
-                receiverHasRead: false
-            });
+        // const docKey = buildDocKey(chats[selectedChat]
+        //     .users.filter(_usr => _usr !== email)[0]);
+
+        // firebase
+        //     .firestore()
+        //     .collection('chats')
+        //     .doc(docKey)
+        //     .update({
+        //         messages: firebase.firestore.FieldValue.arrayUnion({
+        //             sender: email,
+        //             message: msg,
+        //             timestamp: Date.now()
+        //         }),
+        //         receiverHasRead: false
+        //     });
     }
     const goToChat = async (docKey, msg) => {
         const usersInChat = docKey.split(';');
+        console.log('users in chat',usersInChat)
         const chat = chats.find(_chat => usersInChat.every(_user => _chat.users.includes(_user)));
+        console.log('chat',chat);
+        console.log('chat',chats);
+        console.log('chat',chats.indexOf(chat));
+        console.log('msg', msg)
         setNewChatFormVisible(false);
         await selectChat(chats.indexOf(chat));
+        //--------------------------
+        console.log('goToChat fired!');
         submitMessage(msg);
     }
 
@@ -160,7 +203,7 @@ export const Dashboard = ({ history }) => {
                     selectChat={selectChat}
                     chats={chats}
                     userEmail={email}
-                    selectedChatIndex={selectedChat} />
+                    selectedChat={selectedChat} />
                 {
                     newChatFormVisible ?
                         null :

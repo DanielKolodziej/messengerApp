@@ -40,7 +40,7 @@ export const ChatTextbox = (props) => {
     }
     const submitValidMessage = () => {
         if(messageValid(chatText)){
-            console.log('submit');
+            console.log('submitValidMessage fired!');
             props.submitMessage(chatText);
             // setChatText('');
             document.getElementById('chattextbox').value = '';

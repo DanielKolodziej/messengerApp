@@ -38,11 +38,18 @@ export const ChatList = (props) => {
 
   const classes = useStyles();
 
+  // useEffect(()=> {
+  //   console.log('selectedChat from ChatList: ',props.selectedChat);
+  //   if (props.selectedChat !== null){
+  //     props.selectChat(props.selectedChat);
+  //   }
+  // }, [props, props.selectedChat])
+
   const userIsSender = (chat) => {
     return chat.messages[chat.messages.length - 1].sender === props.userEmail;
   }
 
-  console.log(props)
+  // console.log(props)
   if (props.chats.length > 0) {
     return (
       <main className={classes.root}>
@@ -55,7 +62,7 @@ export const ChatList = (props) => {
                   <ListItem
                     onClick={() => props.selectChat(_index)}
                     className={classes.listItem}
-                    selected={props.selectedChatIndex === _index}
+                    selected={props.selectedChat === _index}
                     alignItems="flex-start">
                     <ListItemAvatar>
                       <Avatar alt="Remy Sharp">{_chat.users.filter(_user => _user !== props.userEmail)[0].split('')[0]}</Avatar>

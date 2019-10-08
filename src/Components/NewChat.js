@@ -66,6 +66,7 @@ export const NewChat = (props) => {
                 } return null;
             })
             .includes(username);
+        console.log('existance of receiving user: ', exists);
         return exists;
     }
     const buildDocKey = () => {
@@ -78,18 +79,18 @@ export const NewChat = (props) => {
             .collection('chats')
             .doc(docKey)
             .get()
-        console.log(chat.exists);
+        console.log('existance of dialog between sender/receiver: ',chat.exists);
         return chat.exists;
     }
 
     const submitNewChat = async (e) => {
         e.preventDefault();
         console.log('submitNewChat fired!')
+        //result from userExists function
         const user = await userExists();
-        console.log(user);
         if (user) {
+            //result from chatExists function
             const chatExist = await chatExists();
-            console.log(chatExist);
             chatExist ?
                 props.goToChat(buildDocKey(), message) :
                 props.newChatSubmit({

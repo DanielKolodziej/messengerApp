@@ -33,12 +33,12 @@ export const Dashboard = ({ history }) => {
     const [email, setEmail] = useState(null);
     const [chats, setChats] = useState([]);
 
-    const selectChat = async (chatIndex) => {
+    const selectChat = (chatIndex) => {
         console.log('selectedChat fired!');
         console.log('chatIndex in selectChat', chatIndex)
-        await setSelectedChat(chatIndex);
-        await setNewChatFormVisible(false);
-        await messageRead();
+        setSelectedChat(chatIndex);
+        messageRead();
+        setNewChatFormVisible(false);
     }
 
     // useEffect(() => {
@@ -49,7 +49,7 @@ export const Dashboard = ({ history }) => {
 
     const newChatBtnClicked = () => {
         setNewChatFormVisible(true);
-        setSelectedChat(null);
+        // setSelectedChat(null);
         console.log('newChatBtnClicked fired!');
     }
 
@@ -138,18 +138,23 @@ export const Dashboard = ({ history }) => {
         //     });
     }
     const goToChat = async (docKey, msg) => {
+        console.log('goToChat fired!');
         const usersInChat = docKey.split(';');
         console.log('users in chat',usersInChat)
-        const chat = chats.find(_chat => usersInChat.every(_user => _chat.users.includes(_user)));
-        console.log('chat',chat);
-        console.log('chat',chats);
-        console.log('chat',chats.indexOf(chat));
-        console.log('msg', msg)
+        const specificChat = chats.find(_chat => usersInChat.every(_user => _chat.users.includes(_user)));
+        console.log('All existant chats between user and others',chats);
+        console.log('Existant chat between user and specific receiver',specificChat);
+        console.log('Index of the specific chat from all chats',chats.indexOf(specificChat));
+        console.log('message that will be sent', msg)
         setNewChatFormVisible(false);
-        await selectChat(chats.indexOf(chat));
+        
+        // await 
+        await selectChat(chats.indexOf(specificChat))
+        // await console.log('awaited selectChat(index)')
         //--------------------------
-        console.log('goToChat fired!');
+        // console.log('submitMessage called!')
         submitMessage(msg);
+        
     }
 
     const newChatSubmit = async (chatObj) => {

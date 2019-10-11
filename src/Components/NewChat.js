@@ -96,15 +96,14 @@ export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
     if (user) {
       // result from chatExists function
       const chatExist = await chatExists();
-      chatExist
+      return chatExist
         ? goToChat(buildDocKey(), message)
         : newChatSubmit({
             sendTo: username,
             message,
           });
-    } else {
-      setServerError('User does not exist');
     }
+    setServerError('User does not exist');
   };
 
   return (

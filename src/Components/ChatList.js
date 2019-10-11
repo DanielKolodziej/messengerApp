@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   List,
@@ -16,6 +16,8 @@ import { NotificationImportant } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from 'prop-types';
 
+import { MiniList } from './MiniList';
+
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
@@ -23,6 +25,9 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     left: '0',
     width: '300px',
+    // width: '30%',
+    // minWidth: '265px',
+    // maxWidth: '330px',
     boxShadow: '0px 0px 2px black',
   },
   listItem: {
@@ -46,6 +51,10 @@ const useStyles = makeStyles(theme => ({
       color: 'red',
     },
   },
+  avatar: {
+    textShadow: '2px 2px 4px #000000',
+    boxShadow: '2px 2px 4px #000000',
+  },
 }));
 
 const firebase = require('firebase');
@@ -59,7 +68,18 @@ export const ChatList = ({
 }) => {
   const classes = useStyles();
 
+  const [miniVisible, setMiniVisible] = useState({
+    show: false,
+    id: null,
+    col: null,
+  });
+
   const randoColor = () => Math.floor(Math.random() * Math.floor(255));
+
+  // useEffect(() => {
+  //   setMiniVisible({ col: randoColor() });
+  //   console.log(miniVisible.col);
+  // }, [miniVisible.col]);
 
   // useEffect(()=> {
   //   console.log('selectedChat from ChatList: ',props.selectedChat);
@@ -112,9 +132,25 @@ export const ChatList = ({
               >
                 <ListItemAvatar>
                   <Avatar
+                    onMouseEnter={() => {
+                      setMiniVisible({
+                        show: true,
+                        id: _index,
+                      });
+                    }}
+                    onMouseLeave={() => {
+                      setMiniVisible({
+                        show: false,
+                        id: null,
+                      });
+                    }}
+                    className={classes.avatar}
                     style={{
                       background: `rgb(${randoColor()},${randoColor()},${randoColor()})`,
                     }}
+                    // style={{
+                    //   background: `rgb(${miniVisible.col},${miniVisible.col},${miniVisible.col})`,
+                    // }}
                     alt="Remy Sharp"
                   >
                     {
@@ -124,6 +160,14 @@ export const ChatList = ({
                     }
                   </Avatar>
                 </ListItemAvatar>
+                {miniVisible.show && miniVisible.id === _index ? (
+                  <MiniList
+                    receiver={
+                      _chat.users.filter(_user => _user !== userEmail)[0]
+                    }
+                    col={miniVisible.col}
+                  />
+                ) : null}
                 <ListItemIcon>
                   <DeleteIcon
                     onClick={() => deleteItem()}

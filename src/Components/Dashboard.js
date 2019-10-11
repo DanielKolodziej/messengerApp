@@ -240,7 +240,7 @@ export const Dashboard = ({ history }) => {
           />
         ) : null}
         <Button onClick={() => signOut()} className={classes.signOutBtn}>
-          Sign Out
+          {email.split('@')[0]}, Sign Out
         </Button>
       </div>
     );

@@ -84,7 +84,7 @@ export const Login = ({ history }) => {
   const handleInputChange = e => {
     const { name, value } = e.target;
 
-    name === 'email' ? setEmail(value) : setPassword(value);
+    return name === 'email' ? setEmail(value) : setPassword(value);
   };
   return (
     <main className={classes.main}>

@@ -113,7 +113,7 @@ export const ChatList = ({
                 <ListItemAvatar>
                   <Avatar
                     style={{
-                      background: `rgb(${randoColor},${randoColor},${randoColor})`,
+                      background: `rgb(${randoColor()},${randoColor()},${randoColor()})`,
                     }}
                     alt="Remy Sharp"
                   >
@@ -131,7 +131,9 @@ export const ChatList = ({
                   />
                 </ListItemIcon>
                 <ListItemText
-                  primary={_chat.users.filter(_user => _user !== userEmail)[0]}
+                  primary={`${_chat.users
+                    .filter(_user => _user !== userEmail)[0]
+                    .substring(0, 20)}...`}
                   secondary={
                     <>
                       <Typography component="span" color="textPrimary">

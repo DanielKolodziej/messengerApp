@@ -92,6 +92,6 @@ export const ChatView = ({ chat, user }) => {
 };
 
 ChatView.propTypes = {
-  chat: Proptypes.array,
+  chat: Proptypes.object,
   user: Proptypes.string,
 };

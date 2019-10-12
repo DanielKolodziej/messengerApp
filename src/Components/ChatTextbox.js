@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { useMediaQuery } from 'react-responsive';
 import { TextField } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,9 +27,19 @@ const useStyles = makeStyles({
   chatTextBox: {
     width: 'calc(100% - 25px)',
   },
+
+  chatTextBoxContainerMobile: {
+    position: 'absolute',
+    bottom: '15px',
+    left: '115px',
+    boxSizing: 'border-box',
+    overflow: 'auto',
+    width: 'calc(100% - 130px)',
+  },
 });
 
 export const ChatTextbox = ({ submitMessage }) => {
+  const isNotMobile = useMediaQuery({ minWidth: 650 })
   const classes = useStyles();
 
   const [chatText, setChatText] = useState('');
@@ -50,7 +61,7 @@ export const ChatTextbox = ({ submitMessage }) => {
   };
 
   return (
-    <div className={classes.chatTextBoxContainer}>
+    <div className={ isNotMobile ? classes.chatTextBoxContainer : classes.chatTextBoxContainerMobile}>
       <TextField
         onKeyUp={e => userTyping(e)}
         id="chattextbox"

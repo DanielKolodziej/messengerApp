@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useMediaQuery } from 'react-responsive';
 import Proptypes from 'prop-types';
 
 const useStyles = makeStyles({
@@ -35,7 +36,7 @@ const useStyles = makeStyles({
     boxSizing: 'border-box',
     wordWrap: 'break-word',
     marginTop: '10px',
-    backgroundColor: '#707BC4',
+    backgroundColor: '#9da1C4',
     color: 'white',
     width: '300px',
     borderRadius: '10px',
@@ -53,9 +54,34 @@ const useStyles = makeStyles({
     paddingTop: '10px',
     boxSizing: 'border-box',
   },
+
+  contentMobile: {
+    height: 'calc(100vh - 100px)',
+    overflow: 'auto',
+    padding: '25px',
+    marginLeft: '100px',
+    boxSizing: 'border-box',
+    overflowY: 'scroll',
+    top: '50px',
+    width: 'calc(100% - 100px)',
+    position: 'absolute',
+  },
+  chatHeaderMobile: {
+    width: 'calc(100% - 101px)',
+    height: '50px',
+    backgroundColor: '#344195',
+    position: 'fixed',
+    marginLeft: '101px',
+    fontSize: '18px',
+    textAlign: 'center',
+    color: 'white',
+    paddingTop: '10px',
+    boxSizing: 'border-box',
+  },
 });
 
 export const ChatView = ({ chat, user }) => {
+  const isNotMobile = useMediaQuery({ minWidth: 650 })
   const classes = useStyles();
 
   useEffect(() => {
@@ -72,10 +98,10 @@ export const ChatView = ({ chat, user }) => {
   }
   return (
     <div>
-      <div className={classes.chatHeader}>
+      <div className={ isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}>
         Your conversation with {chat.users.filter(_usr => _usr !== user)[0]}
       </div>
-      <main id="chatview-container" className={classes.content}>
+      <main id="chatview-container" className={ isNotMobile ? classes.content : classes.contentMobile}>
         {chat.messages.map((_msg, _index) => (
           <div
             key={_index}

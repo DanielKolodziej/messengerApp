@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   List,
@@ -11,12 +12,13 @@ import {
   Button,
   ListItemIcon,
 } from '@material-ui/core';
-
+import MessageIcon from '@material-ui/icons/Message';
+import CreateIcon from '@material-ui/icons/Create';
 import { NotificationImportant } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from 'prop-types';
 
-import { MiniList } from './MiniList';
+import { ChatListDetails } from './ChatListDetails';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,6 +57,17 @@ const useStyles = makeStyles(theme => ({
     textShadow: '2px 2px 4px #000000',
     boxShadow: '2px 2px 4px #000000',
   },
+  rootMobile: {
+    backgroundColor: theme.palette.background.paper,
+    height: 'calc(100% - 35px)',
+    position: 'absolute',
+    left: '0',
+    width: '100px',
+    // width: '30%',
+    // minWidth: '265px',
+    // maxWidth: '330px',
+    boxShadow: '0px 0px 2px black',
+  },
 }));
 
 const firebase = require('firebase');
@@ -66,6 +79,7 @@ export const ChatList = ({
   selectChat,
   selectedChat,
 }) => {
+  const isNotMobile = useMediaQuery({ minWidth: 650 })
   const classes = useStyles();
 
   const [miniVisible, setMiniVisible] = useState({
@@ -75,20 +89,6 @@ export const ChatList = ({
   });
 
   const randoColor = () => Math.floor(Math.random() * Math.floor(255));
-
-  // useEffect(() => {
-  //   setMiniVisible({ col: randoColor() });
-  //   console.log(miniVisible.col);
-  // }, [miniVisible.col]);
-
-  // useEffect(()=> {
-  //   console.log('selectedChat from ChatList: ',props.selectedChat);
-  //   if (props.selectedChat !== null){
-  //     props.selectChat(props.selectedChat);
-  //   }
-  // }, [props, props.selectedChat])
-
-  //-----------------------
 
   const deleteItem = () => {
     console.log('deleteItem fired!');
@@ -110,7 +110,7 @@ export const ChatList = ({
     chat.messages[chat.messages.length - 1].sender === userEmail;
 
   if (chats.length > 0) {
-    return (
+    return isNotMobile ? (
       <main className={classes.root}>
         <Button
           onClick={() => newChatBtnClicked()}
@@ -161,7 +161,7 @@ export const ChatList = ({
                   </Avatar>
                 </ListItemAvatar>
                 {miniVisible.show && miniVisible.id === _index ? (
-                  <MiniList
+                  <ChatListDetails
                     receiver={
                       _chat.users.filter(_user => _user !== userEmail)[0]
                     }
@@ -199,7 +199,85 @@ export const ChatList = ({
           ))}
         </List>
       </main>
-    );
+    ) : 
+    // <MobileList>
+    <div className={classes.rootMobile}>
+      <Button
+          onClick={() => newChatBtnClicked()}
+          className={classes.newChatBtn}
+          variant="contained"
+          fullWidth
+          color="primary"
+        >
+          <CreateIcon fontSize='small' />
+          <MessageIcon/>
+        </Button>
+        <List>
+          {chats.map((_chat, _index) => (
+            <div key={_index}>
+              <ListItem
+                onClick={() => selectChat(_index)}
+                className={classes.listItem}
+                selected={selectedChat === _index}
+                alignItems="flex-start"
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    onMouseEnter={() => {
+                      setMiniVisible({
+                        show: true,
+                        id: _index,
+                      });
+                    }}
+                    onMouseLeave={() => {
+                      setMiniVisible({
+                        show: false,
+                        id: null,
+                      });
+                    }}
+                    className={classes.avatar}
+                    style={{
+                      background: `rgb(${randoColor()},${randoColor()},${randoColor()})`,
+                    }}
+                    // style={{
+                    //   background: `rgb(${miniVisible.col},${miniVisible.col},${miniVisible.col})`,
+                    // }}
+                    alt="Remy Sharp"
+                  >
+                    {
+                      _chat.users
+                        .filter(_user => _user !== userEmail)[0]
+                        .split('')[0]
+                    }
+                  </Avatar>
+                </ListItemAvatar>
+                {miniVisible.show && miniVisible.id === _index ? (
+                  <ChatListDetails
+                    receiver={
+                      _chat.users.filter(_user => _user !== userEmail)[0]
+                    }
+                    col={miniVisible.col}
+                  />
+                ) : null}
+                <ListItemIcon>
+                  <DeleteIcon
+                    onClick={() => deleteItem()}
+                    className={classes.del}
+                  />
+                </ListItemIcon>
+                
+                {_chat.receiverHasRead === false && !userIsSender(_chat) ? (
+                  <ListItemIcon>
+                    <NotificationImportant className={classes.unreadMessage} />
+                  </ListItemIcon>
+                ) : null}
+              </ListItem>
+              <Divider />
+            </div>
+          ))}
+        </List>
+      </div>
+    // </MobileList> ;
   }
   return (
     <div className={classes.root}>

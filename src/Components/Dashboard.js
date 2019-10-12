@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-
+import { useMediaQuery } from 'react-responsive';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 
 import Proptypes from 'prop-types';
 import { ChatList } from './ChatList';
@@ -23,9 +24,21 @@ const useStyles = makeStyles({
     boxShadow: '0px 0px 2px black',
     color: 'white',
   },
+  signOutBtnMobile: {
+    position: 'absolute',
+    bottom: '0px',
+    left: '0px',
+    width: '100px',
+    borderRadius: '0px',
+    backgroundColor: '#227092',
+    height: '35px',
+    boxShadow: '0px 0px 2px black',
+    color: 'white',
+  },
 });
 
 export const Dashboard = ({ history }) => {
+  const isNotMobile = useMediaQuery({ minWidth: 650 })
   const classes = useStyles();
 
   const [selectedChat, setSelectedChat] = useState(null);
@@ -239,9 +252,15 @@ export const Dashboard = ({ history }) => {
             newChatSubmit={newChatSubmit}
           />
         ) : null}
-        <Button onClick={() => signOut()} className={classes.signOutBtn}>
-          {email.split('@')[0]}, Sign Out
-        </Button>
+        {
+          isNotMobile ?
+          <Button onClick={() => signOut()} className={classes.signOutBtn}>
+            {email.split('@')[0]}, Sign Out
+          </Button> :
+          <Button onClick={() => signOut()} className={classes.signOutBtnMobile}>
+            <MeetingRoomIcon />
+          </Button>
+        }
       </div>
     );
   }

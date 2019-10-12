@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const MiniList = ({ receiver, col }) => {
+export const ChatListDetails = ({ receiver, col }) => {
   const classes = useStyles();
   return (
     <div className={classes.root} style={{ border: `2px solid ${col}` }}>
@@ -25,7 +25,7 @@ export const MiniList = ({ receiver, col }) => {
   );
 };
 
-MiniList.propTypes = {
+ChatListDetails.propTypes = {
   receiver: PropTypes.string,
   col: PropTypes.number,
 };

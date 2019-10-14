@@ -78,6 +78,8 @@ export const ChatList = ({
   newChatBtnClicked,
   selectChat,
   selectedChat,
+  // messageRead,
+  // setSelectedChat,
 }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 })
   const classes = useStyles();
@@ -199,10 +201,10 @@ export const ChatList = ({
           ))}
         </List>
       </main>
-    ) : 
-    // <MobileList>
-    <div className={classes.rootMobile}>
-      <Button
+    ) :
+      // <MobileList>
+      <div className={classes.rootMobile}>
+        <Button
           onClick={() => newChatBtnClicked()}
           className={classes.newChatBtn}
           variant="contained"
@@ -210,7 +212,7 @@ export const ChatList = ({
           color="primary"
         >
           <CreateIcon fontSize='small' />
-          <MessageIcon/>
+          <MessageIcon />
         </Button>
         <List>
           {chats.map((_chat, _index) => (
@@ -265,7 +267,7 @@ export const ChatList = ({
                     className={classes.del}
                   />
                 </ListItemIcon>
-                
+
                 {_chat.receiverHasRead === false && !userIsSender(_chat) ? (
                   <ListItemIcon>
                     <NotificationImportant className={classes.unreadMessage} />

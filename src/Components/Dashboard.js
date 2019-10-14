@@ -3,6 +3,7 @@ import { useMediaQuery } from 'react-responsive';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import Proptypes from 'prop-types';
 import { ChatList } from './ChatList';
@@ -23,6 +24,11 @@ const useStyles = makeStyles({
     height: '35px',
     boxShadow: '0px 0px 2px black',
     color: 'white',
+    '&:hover': {
+      backgroundColor: '#0069d9',
+      borderColor: '#0062cc',
+      boxShadow: '0px 0px 10px black',
+    },
   },
   signOutBtnMobile: {
     position: 'absolute',
@@ -34,6 +40,11 @@ const useStyles = makeStyles({
     height: '35px',
     boxShadow: '0px 0px 2px black',
     color: 'white',
+    '&:hover': {
+      backgroundColor: '#0069d9',
+      borderColor: '#0062cc',
+      boxShadow: '0px 0px 10px black',
+    },
   },
 });
 
@@ -102,9 +113,11 @@ export const Dashboard = ({ history }) => {
   const selectChat = chatIndex => {
     console.log('selectedChat fired!');
     console.log('chatIndex in selectChat', chatIndex);
+    // console.log('selectedChat state', selectedChat);
     setSelectedChat(chatIndex);
-    messageRead();
+
     setNewChatFormVisible(false);
+    messageRead();
   };
 
   const signOut = () => {
@@ -235,6 +248,7 @@ export const Dashboard = ({ history }) => {
           userEmail={email}
           selectedChat={selectedChat}
           buildDocKey={buildDocKey}
+          messageRead={messageRead}
         />
         {newChatFormVisible ? null : (
           <ChatView user={email} chat={chats[selectedChat]} />
@@ -254,12 +268,12 @@ export const Dashboard = ({ history }) => {
         ) : null}
         {
           isNotMobile ?
-          <Button onClick={() => signOut()} className={classes.signOutBtn}>
-            {email.split('@')[0]}, Sign Out
+            <Button onClick={() => signOut()} className={classes.signOutBtn}>
+              {email.split('@')[0]}, Sign Out
           </Button> :
-          <Button onClick={() => signOut()} className={classes.signOutBtnMobile}>
-            <MeetingRoomIcon />
-          </Button>
+            <Button onClick={() => signOut()} className={classes.signOutBtnMobile}>
+              <MeetingRoomIcon /><ArrowBackIcon fontSize='small' />
+            </Button>
         }
       </div>
     );

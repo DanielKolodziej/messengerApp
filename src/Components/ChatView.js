@@ -44,7 +44,7 @@ const useStyles = makeStyles({
 
   chatHeader: {
     width: 'calc(100% - 301px)',
-    height: '50px',
+    height: '36px',
     backgroundColor: '#344195',
     position: 'fixed',
     marginLeft: '301px',
@@ -68,7 +68,7 @@ const useStyles = makeStyles({
   },
   chatHeaderMobile: {
     width: 'calc(100% - 101px)',
-    height: '50px',
+    height: '36px',
     backgroundColor: '#344195',
     position: 'fixed',
     marginLeft: '101px',
@@ -98,10 +98,10 @@ export const ChatView = ({ chat, user }) => {
   }
   return (
     <div>
-      <div className={ isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}>
+      <div className={isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}>
         Your conversation with {chat.users.filter(_usr => _usr !== user)[0]}
       </div>
-      <main id="chatview-container" className={ isNotMobile ? classes.content : classes.contentMobile}>
+      <main id="chatview-container" className={isNotMobile ? classes.content : classes.contentMobile}>
         {chat.messages.map((_msg, _index) => (
           <div
             key={_index}

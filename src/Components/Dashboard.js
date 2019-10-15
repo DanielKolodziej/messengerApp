@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -49,7 +49,7 @@ const useStyles = makeStyles({
 });
 
 export const Dashboard = ({ history }) => {
-  const isNotMobile = useMediaQuery({ minWidth: 650 })
+  const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
   const [selectedChat, setSelectedChat] = useState(null);
@@ -68,6 +68,9 @@ export const Dashboard = ({ history }) => {
     console.log('newChatBtnClicked fired!');
   };
 
+  // const buildDocKey = useCallback(friend => [email, friend].sort().join(';'), [
+  //   email,
+  // ]);
   const buildDocKey = friend => [email, friend].sort().join(';');
 
   const clickedMessageWhereNotSender = chatIndex =>
@@ -97,18 +100,33 @@ export const Dashboard = ({ history }) => {
     } else {
       console.log('selectedChat is null and hasnt updated for some reason.');
     }
-    // const docKey = buildDocKey(chats[selectedChat].users.filter(_usr => _usr !== email)[0]);
-    // // // console.log('docKey', docKey);
-    // if(clickedMessageWhereNotSender(selectedChat)) {
-    //   firebase
-    //     .firestore()
-    //     .collection('chats')
-    //     .doc(docKey)
-    //     .update({ receiverHasRead: true });
-    // } else {
-    //   console.log('Clicked message where the user was the sender');
-    // }
   };
+
+  // useEffect for messageRead functionality
+  // useEffect(() => {
+  //   const clickedMessageWhereNotSender = chatIndex =>
+  //     chats[chatIndex].messages[chats[chatIndex].messages.length - 1].sender !==
+  //     email;
+
+  //   if (selectedChat != null) {
+  //     console.log('currently.....', selectedChat);
+  //     const docKey = buildDocKey(
+  //       chats[selectedChat].users.filter(_usr => _usr !== email)[0]
+  //     );
+
+  //     if (clickedMessageWhereNotSender(selectedChat)) {
+  //       firebase
+  //         .firestore()
+  //         .collection('chats')
+  //         .doc(docKey)
+  //         .update({ receiverHasRead: true });
+  //     } else {
+  //       console.log('Clicked message where the user was the sender');
+  //     }
+  //   } else {
+  //     console.log('selectedChat is null and hasnt updated for some reason.');
+  //   }
+  // }, [buildDocKey, chats, selectedChat, email]);
 
   const selectChat = chatIndex => {
     console.log('selectedChat fired!');
@@ -146,24 +164,34 @@ export const Dashboard = ({ history }) => {
     } else {
       console.log('selectedChat is null');
     }
-
-    // const docKey = buildDocKey(chats[selectedChat]
-    //     .users.filter(_usr => _usr !== email)[0]);
-
-    // firebase
-    //     .firestore()
-    //     .collection('chats')
-    //     .doc(docKey)
-    //     .update({
-    //         messages: firebase.firestore.FieldValue.arrayUnion({
-    //             sender: email,
-    //             message: msg,
-    //             timestamp: Date.now()
-    //         }),
-    //         receiverHasRead: false
-    //     });
   };
-  const goToChat = async (docKey, msg) => {
+
+  // useEffect for submit message
+  // useEffect(()=>{
+  //   console.log('useeffeect for submitMessage Fired!');
+  //   if (selectedChat != null) {
+  //     const docKey = buildDocKey(
+  //       chats[selectedChat].users.filter(_usr => _usr !== email)[0]
+  //     );
+
+  //     firebase
+  //       .firestore()
+  //       .collection('chats')
+  //       .doc(docKey)
+  //       .update({
+  //         messages: firebase.firestore.FieldValue.arrayUnion({
+  //           sender: email,
+  //           message: msg,
+  //           timestamp: Date.now(),
+  //         }),
+  //         receiverHasRead: false,
+  //       });
+  //   } else {
+  //     console.log('selectedChat is null');
+  //   }
+  // })
+
+  const goToChat = (docKey, msg) => {
     console.log('goToChat fired!');
     const usersInChat = docKey.split(';');
     console.log('users in chat', usersInChat);
@@ -184,9 +212,9 @@ export const Dashboard = ({ history }) => {
 
     // await
     selectChat(chats.indexOf(specificChat));
-    // await console.log('awaited selectChat(index)')
+    console.log('goToChat index', chats.indexOf(specificChat));
     //--------------------------
-    // console.log('submitMessage called!')
+    console.log('submitMessage called!');
     submitMessage(msg);
   };
 
@@ -248,7 +276,7 @@ export const Dashboard = ({ history }) => {
           userEmail={email}
           selectedChat={selectedChat}
           buildDocKey={buildDocKey}
-          messageRead={messageRead}
+          // messageRead={messageRead}
         />
         {newChatFormVisible ? null : (
           <ChatView user={email} chat={chats[selectedChat]} />
@@ -256,7 +284,7 @@ export const Dashboard = ({ history }) => {
         {selectedChat !== null && !newChatFormVisible ? (
           <ChatTextbox
             submitMessage={submitMessage}
-            messageRead={messageRead}
+            // messageRead={messageRead}
           />
         ) : null}
         {newChatFormVisible ? (
@@ -266,15 +294,19 @@ export const Dashboard = ({ history }) => {
             newChatSubmit={newChatSubmit}
           />
         ) : null}
-        {
-          isNotMobile ?
-            <Button onClick={() => signOut()} className={classes.signOutBtn}>
-              {email.split('@')[0]}, Sign Out
-          </Button> :
-            <Button onClick={() => signOut()} className={classes.signOutBtnMobile}>
-              <MeetingRoomIcon /><ArrowBackIcon fontSize='small' />
-            </Button>
-        }
+        {isNotMobile ? (
+          <Button onClick={() => signOut()} className={classes.signOutBtn}>
+            {email.split('@')[0]}, Sign Out
+          </Button>
+        ) : (
+          <Button
+            onClick={() => signOut()}
+            className={classes.signOutBtnMobile}
+          >
+            <MeetingRoomIcon />
+            <ArrowBackIcon fontSize="small" />
+          </Button>
+        )}
       </div>
     );
   }

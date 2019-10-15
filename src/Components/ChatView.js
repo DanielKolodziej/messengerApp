@@ -81,7 +81,7 @@ const useStyles = makeStyles({
 });
 
 export const ChatView = ({ chat, user }) => {
-  const isNotMobile = useMediaQuery({ minWidth: 650 })
+  const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
   useEffect(() => {
@@ -98,10 +98,15 @@ export const ChatView = ({ chat, user }) => {
   }
   return (
     <div>
-      <div className={isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}>
+      <div
+        className={isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}
+      >
         Your conversation with {chat.users.filter(_usr => _usr !== user)[0]}
       </div>
-      <main id="chatview-container" className={isNotMobile ? classes.content : classes.contentMobile}>
+      <main
+        id="chatview-container"
+        className={isNotMobile ? classes.content : classes.contentMobile}
+      >
         {chat.messages.map((_msg, _index) => (
           <div
             key={_index}

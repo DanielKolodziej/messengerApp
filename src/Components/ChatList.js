@@ -81,7 +81,7 @@ export const ChatList = ({
   // messageRead,
   // setSelectedChat,
 }) => {
-  const isNotMobile = useMediaQuery({ minWidth: 650 })
+  const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
   const [miniVisible, setMiniVisible] = useState({
@@ -201,7 +201,7 @@ export const ChatList = ({
           ))}
         </List>
       </main>
-    ) :
+    ) : (
       // <MobileList>
       <div className={classes.rootMobile}>
         <Button
@@ -211,7 +211,7 @@ export const ChatList = ({
           fullWidth
           color="primary"
         >
-          <CreateIcon fontSize='small' />
+          <CreateIcon fontSize="small" />
           <MessageIcon />
         </Button>
         <List>
@@ -279,6 +279,7 @@ export const ChatList = ({
           ))}
         </List>
       </div>
+    );
     // </MobileList> ;
   }
   return (

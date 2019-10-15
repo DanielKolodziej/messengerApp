@@ -39,7 +39,7 @@ const useStyles = makeStyles({
 });
 
 export const ChatTextbox = ({ submitMessage }) => {
-  const isNotMobile = useMediaQuery({ minWidth: 650 })
+  const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
   const [chatText, setChatText] = useState('');
@@ -61,7 +61,13 @@ export const ChatTextbox = ({ submitMessage }) => {
   };
 
   return (
-    <div className={ isNotMobile ? classes.chatTextBoxContainer : classes.chatTextBoxContainerMobile}>
+    <div
+      className={
+        isNotMobile
+          ? classes.chatTextBoxContainer
+          : classes.chatTextBoxContainerMobile
+      }
+    >
       <TextField
         onKeyUp={e => userTyping(e)}
         id="chattextbox"

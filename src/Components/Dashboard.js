@@ -191,7 +191,7 @@ export const Dashboard = ({ history }) => {
   //   }
   // })
 
-  const goToChat = (docKey, msg) => {
+  const goToChat = async (docKey, msg) => {
     console.log('goToChat fired!');
     const usersInChat = docKey.split(';');
     console.log('users in chat', usersInChat);
@@ -211,7 +211,7 @@ export const Dashboard = ({ history }) => {
     setNewChatFormVisible(false);
 
     // await
-    selectChat(chats.indexOf(specificChat));
+    await selectChat(chats.indexOf(specificChat));
     console.log('goToChat index', chats.indexOf(specificChat));
     //--------------------------
     console.log('submitMessage called!');

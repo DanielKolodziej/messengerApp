@@ -49,6 +49,7 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     bottom: '0',
     right: '5px',
+    zIndex: '1',
     '&:hover': {
       color: 'red',
     },
@@ -102,6 +103,7 @@ export const ChatList = ({
         .doc(docKey)
         .delete();
       console.log('item deleted...');
+      // selectChat(e - 1);
     }
   };
 
@@ -169,7 +171,10 @@ export const ChatList = ({
                 ) : null}
                 <ListItemIcon>
                   <DeleteIcon
-                    onClick={() => deleteItem(_index)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      deleteItem(_index);
+                    }}
                     className={classes.del}
                   />
                 </ListItemIcon>
@@ -182,7 +187,7 @@ export const ChatList = ({
                       <Typography component="span" color="textPrimary">
                         {`${_chat.messages[
                           _chat.messages.length - 1
-                        ].message.substring(0, 30)} ...`}
+                        ].message.substring(0, 20)} ...`}
                       </Typography>
                     </>
                   }
@@ -260,7 +265,10 @@ export const ChatList = ({
                 ) : null}
                 <ListItemIcon>
                   <DeleteIcon
-                    onClick={() => deleteItem(_index)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      deleteItem(_index);
+                    }}
                     className={classes.del}
                   />
                 </ListItemIcon>

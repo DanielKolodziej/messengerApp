@@ -63,9 +63,6 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     left: '0',
     width: '100px',
-    // width: '30%',
-    // minWidth: '265px',
-    // maxWidth: '330px',
     boxShadow: '0px 0px 2px black',
   },
 }));
@@ -78,6 +75,7 @@ export const ChatList = ({
   newChatBtnClicked,
   selectChat,
   selectedChat,
+  buildDocKey,
   // messageRead,
   // setSelectedChat,
 }) => {
@@ -92,17 +90,16 @@ export const ChatList = ({
 
   const randoColor = () => Math.floor(Math.random() * Math.floor(255));
 
-  const deleteItem = () => {
-    console.log('deleteItem fired!');
+  const deleteItem = e => {
     const conf = window.confirm('Are you sure you want to delete this chat?');
-    // const docKey = props.buildDocKey(props.chats[props.selectedChat].users.filter(_usr => _usr !== props.email)[0]);
-    // console.log(docKey);
-    // console.log(props.email);
+    const docKey = buildDocKey(
+      chats[e].users.filter(_usr => _usr !== userEmail)[0]
+    );
     if (conf) {
       firebase
         .firestore()
         .collection('chats')
-        .doc('fake@person.com;qwe@qwe.com') // hard coded for now....needs to get docKey
+        .doc(docKey)
         .delete();
       console.log('item deleted...');
     }
@@ -172,7 +169,7 @@ export const ChatList = ({
                 ) : null}
                 <ListItemIcon>
                   <DeleteIcon
-                    onClick={() => deleteItem()}
+                    onClick={() => deleteItem(_index)}
                     className={classes.del}
                   />
                 </ListItemIcon>
@@ -263,7 +260,7 @@ export const ChatList = ({
                 ) : null}
                 <ListItemIcon>
                   <DeleteIcon
-                    onClick={() => deleteItem()}
+                    onClick={() => deleteItem(_index)}
                     className={classes.del}
                   />
                 </ListItemIcon>
@@ -304,4 +301,5 @@ ChatList.propTypes = {
   selectChat: PropTypes.func,
   selectedChat: PropTypes.number,
   newChatBtnClicked: PropTypes.func,
+  buildDocKey: PropTypes.func,
 };

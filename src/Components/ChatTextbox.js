@@ -38,7 +38,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const ChatTextbox = ({ submitMessage }) => {
+export const ChatTextbox = ({ submitMessage, selectedChat, messageRead }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
@@ -48,7 +48,7 @@ export const ChatTextbox = ({ submitMessage }) => {
   const submitValidMessage = () => {
     if (messageValid(chatText)) {
       console.log('submitValidMessage fired!');
-      submitMessage(chatText);
+      submitMessage(chatText, selectedChat);
       // setChatText('');
       document.getElementById('chattextbox').value = '';
     }
@@ -73,7 +73,7 @@ export const ChatTextbox = ({ submitMessage }) => {
         id="chattextbox"
         className={classes.chatTextBox}
         // onFocus={() => props.messageRead} works
-        // onFocus={() => props.messageRead()}
+        onFocus={() => messageRead()}
         placeholder="Type your message"
       />
       <Send onClick={() => submitValidMessage()} className={classes.sendBtn} />

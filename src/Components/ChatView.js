@@ -90,6 +90,7 @@ export const ChatView = ({ chat, user }) => {
     if (container) {
       // issue in microsoft edge
       container.scrollTo(0, container.scrollHeight);
+      // container.scrollIntoView(0, container.scrollHeight) //edge workaround?
     }
   }, [chat]); // not 100% sure on the dependency but seems to be working
 

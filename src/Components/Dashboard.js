@@ -69,7 +69,7 @@ export const Dashboard = ({ history }) => {
     chats[chatIndex].messages[chats[chatIndex].messages.length - 1].sender !==
     email;
 
-  const messageRead = (ind) => {
+  const messageRead = ind => {
     const docKey = buildDocKey(
       chats[ind].users.filter(_usr => _usr !== email)[0]
     );
@@ -113,7 +113,9 @@ export const Dashboard = ({ history }) => {
         messages: firebase.firestore.FieldValue.arrayUnion({
           sender: email,
           message: msg,
-          timestamp: Date.now(),
+          timestamp: Date(),
+          // Date().substring(16, 24), current time
+          // Date().substring(4, 11), month day
         }),
         receiverHasRead: false,
       });
@@ -162,11 +164,13 @@ export const Dashboard = ({ history }) => {
           {
             message: chatObj.message,
             sender: email,
+            // adding timestamp
+            timestamp: chatObj.timestamp,
           },
         ],
       });
     setNewChatFormVisible(false);
-    selectChat(chats.length - 1);// -1
+    selectChat(chats.length - 1); // -1
   };
 
   useEffect(() => {
@@ -227,14 +231,14 @@ export const Dashboard = ({ history }) => {
             {email.split('@')[0]}, Sign Out
           </Button>
         ) : (
-            <Button
-              onClick={() => signOut()}
-              className={classes.signOutBtnMobile}
-            >
-              <MeetingRoomIcon />
-              <ArrowBackIcon fontSize="small" />
-            </Button>
-          )}
+          <Button
+            onClick={() => signOut()}
+            className={classes.signOutBtnMobile}
+          >
+            <MeetingRoomIcon />
+            <ArrowBackIcon fontSize="small" />
+          </Button>
+        )}
       </div>
     );
   }

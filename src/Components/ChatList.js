@@ -27,9 +27,6 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     left: '0',
     width: '300px',
-    // width: '30%',
-    // minWidth: '265px',
-    // maxWidth: '330px',
     boxShadow: '0px 0px 2px black',
   },
   listItem: {
@@ -57,6 +54,12 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     textShadow: '2px 2px 4px #000000',
     boxShadow: '2px 2px 4px #000000',
+  },
+  time: {
+    color: '#3F51B5',
+    position: 'absolute',
+    bottom: 0,
+    left: '60px',
   },
   rootMobile: {
     backgroundColor: theme.palette.background.paper,
@@ -106,26 +109,6 @@ export const ChatList = ({
 
   const userIsSender = chat =>
     chat.messages[chat.messages.length - 1].sender === userEmail;
-
-  // useEffect(() => {
-  //   console.log(chats);
-  // }, [chats])
-
-  // if (chats.length > 0) {
-  //   return (
-  //     <main className={classes.root}>
-  //       <Button
-  //         onClick={() => newChatBtnClicked()}
-  //         className={classes.newChatBtn}
-  //         variant="contained"
-  //         fullWidth
-  //         color="primary"
-  //       >
-  //         New Message
-  //       </Button>
-  //     </main>
-  //   )
-  // }
 
   if (chats.length > 0) {
     return isNotMobile ? (
@@ -186,6 +169,18 @@ export const ChatList = ({
                     col={miniVisible.col}
                   />
                 ) : null}
+                <ListItemText
+                  className={classes.time}
+                  primary={
+                    <Typography fontSize={4}>
+                      {_chat.messages[_chat.messages.length - 1].timestamp
+                        ? _chat.messages[
+                            _chat.messages.length - 1
+                          ].timestamp.substring(4, 11)
+                        : null}
+                    </Typography>
+                  }
+                />
                 <ListItemIcon>
                   <DeleteIcon
                     onClick={e => {
@@ -196,15 +191,23 @@ export const ChatList = ({
                   />
                 </ListItemIcon>
                 <ListItemText
-                  primary={`${_chat.users
-                    .filter(_user => _user !== userEmail)[0]
-                    .substring(0, 20)}...`}
+                  primary={
+                    _chat.users.filter(_user => _user !== userEmail)[0].length >
+                    20
+                      ? `${_chat.users
+                          .filter(_user => _user !== userEmail)[0]
+                          .substring(0, 20)}...`
+                      : _chat.users.filter(_user => _user !== userEmail)[0]
+                  }
                   secondary={
                     <>
                       <Typography component="span" color="textPrimary">
-                        {`${_chat.messages[
-                          _chat.messages.length - 1
-                        ].message.substring(0, 20)} ...`}
+                        {_chat.messages[_chat.messages.length - 1].message
+                          .length > 20
+                          ? `${_chat.messages[
+                              _chat.messages.length - 1
+                            ].message.substring(0, 20)} ...`
+                          : _chat.messages[_chat.messages.length - 1].message}
                       </Typography>
                     </>
                   }
@@ -221,87 +224,87 @@ export const ChatList = ({
         </List>
       </main>
     ) : (
-        // <MobileList>
-        <div className={classes.rootMobile}>
-          <Button
-            onClick={() => newChatBtnClicked()}
-            className={classes.newChatBtn}
-            variant="contained"
-            fullWidth
-            color="primary"
-          >
-            <CreateIcon fontSize="small" />
-            <MessageIcon />
-          </Button>
-          <List>
-            {chats.map((_chat, _index) => (
-              <div key={_index}>
-                <ListItem
-                  onClick={() => selectChat(_index)}
-                  className={classes.listItem}
-                  selected={selectedChat === _index}
-                  alignItems="flex-start"
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      onMouseEnter={() => {
-                        setMiniVisible({
-                          show: true,
-                          id: _index,
-                        });
-                      }}
-                      onMouseLeave={() => {
-                        setMiniVisible({
-                          show: false,
-                          id: null,
-                        });
-                      }}
-                      className={classes.avatar}
-                      style={{
-                        background: `rgb(${randoColor()},${randoColor()},${randoColor()})`,
-                      }}
-                      // style={{
-                      //   background: `rgb(${miniVisible.col},${miniVisible.col},${miniVisible.col})`,
-                      // }}
-                      alt="Remy Sharp"
-                    >
-                      {
-                        _chat.users
-                          .filter(_user => _user !== userEmail)[0]
-                          .split('')[0]
-                      }
-                    </Avatar>
-                  </ListItemAvatar>
-                  {miniVisible.show && miniVisible.id === _index ? (
-                    <ChatListDetails
-                      receiver={
-                        _chat.users.filter(_user => _user !== userEmail)[0]
-                      }
-                      col={miniVisible.col}
-                    />
-                  ) : null}
-                  <ListItemIcon>
-                    <DeleteIcon
-                      onClick={e => {
-                        e.stopPropagation();
-                        deleteItem(_index);
-                      }}
-                      className={classes.del}
-                    />
-                  </ListItemIcon>
+      // <MobileList>
+      <div className={classes.rootMobile}>
+        <Button
+          onClick={() => newChatBtnClicked()}
+          className={classes.newChatBtn}
+          variant="contained"
+          fullWidth
+          color="primary"
+        >
+          <CreateIcon fontSize="small" />
+          <MessageIcon />
+        </Button>
+        <List>
+          {chats.map((_chat, _index) => (
+            <div key={_index}>
+              <ListItem
+                onClick={() => selectChat(_index)}
+                className={classes.listItem}
+                selected={selectedChat === _index}
+                alignItems="flex-start"
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    onMouseEnter={() => {
+                      setMiniVisible({
+                        show: true,
+                        id: _index,
+                      });
+                    }}
+                    onMouseLeave={() => {
+                      setMiniVisible({
+                        show: false,
+                        id: null,
+                      });
+                    }}
+                    className={classes.avatar}
+                    style={{
+                      background: `rgb(${randoColor()},${randoColor()},${randoColor()})`,
+                    }}
+                    // style={{
+                    //   background: `rgb(${miniVisible.col},${miniVisible.col},${miniVisible.col})`,
+                    // }}
+                    alt="Remy Sharp"
+                  >
+                    {
+                      _chat.users
+                        .filter(_user => _user !== userEmail)[0]
+                        .split('')[0]
+                    }
+                  </Avatar>
+                </ListItemAvatar>
+                {miniVisible.show && miniVisible.id === _index ? (
+                  <ChatListDetails
+                    receiver={
+                      _chat.users.filter(_user => _user !== userEmail)[0]
+                    }
+                    col={miniVisible.col}
+                  />
+                ) : null}
+                <ListItemIcon>
+                  <DeleteIcon
+                    onClick={e => {
+                      e.stopPropagation();
+                      deleteItem(_index);
+                    }}
+                    className={classes.del}
+                  />
+                </ListItemIcon>
 
-                  {_chat.receiverHasRead === false && !userIsSender(_chat) ? (
-                    <ListItemIcon>
-                      <NotificationImportant className={classes.unreadMessage} />
-                    </ListItemIcon>
-                  ) : null}
-                </ListItem>
-                <Divider />
-              </div>
-            ))}
-          </List>
-        </div>
-      );
+                {_chat.receiverHasRead === false && !userIsSender(_chat) ? (
+                  <ListItemIcon>
+                    <NotificationImportant className={classes.unreadMessage} />
+                  </ListItemIcon>
+                ) : null}
+              </ListItem>
+              <Divider />
+            </div>
+          ))}
+        </List>
+      </div>
+    );
     // </MobileList> ;
   }
   return (

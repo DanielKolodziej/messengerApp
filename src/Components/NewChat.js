@@ -99,9 +99,11 @@ export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
       return chatExist
         ? goToChat(buildDocKey(), message)
         : newChatSubmit({
-          sendTo: username,
-          message,
-        });
+            sendTo: username,
+            message,
+            // adding timestamp
+            timestamp: Date(),
+          });
     }
     setServerError('User does not exist or is sender');
   };

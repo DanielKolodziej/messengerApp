@@ -72,8 +72,7 @@ export const ChatTextbox = ({ submitMessage, selectedChat, messageRead }) => {
         onKeyUp={e => userTyping(e)}
         id="chattextbox"
         className={classes.chatTextBox}
-        // onFocus={() => props.messageRead} works
-        onFocus={() => messageRead()}
+        onFocus={() => messageRead(selectedChat)}
         placeholder="Type your message"
       />
       <Send onClick={() => submitValidMessage()} className={classes.sendBtn} />
@@ -83,4 +82,6 @@ export const ChatTextbox = ({ submitMessage, selectedChat, messageRead }) => {
 
 ChatTextbox.propTypes = {
   submitMessage: PropTypes.func,
+  selectedChat: PropTypes.number,
+  messageRead: PropTypes.func,
 };

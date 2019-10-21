@@ -54,6 +54,11 @@ const useStyles = makeStyles({
     paddingTop: '10px',
     boxSizing: 'border-box',
   },
+  time: {
+    float: 'right',
+    color: 'black',
+    fontSize: 'small',
+  },
 
   contentMobile: {
     height: 'calc(100vh - 100px)',
@@ -116,6 +121,11 @@ export const ChatView = ({ chat, user }) => {
             }
           >
             {_msg.message}
+            {/* {`${_msg.message + _msg.timestamp}`} */}
+            <div className={classes.time}>
+              {_msg.timestamp ? _msg.timestamp.substring(16, 24) : null}
+            </div>
+            {/* .substring(16, 24) */}
           </div>
         ))}
       </main>

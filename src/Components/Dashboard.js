@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
+import moment from 'moment';
 import Proptypes from 'prop-types';
 import { ChatList } from './ChatList';
 import { ChatView } from './ChatView';
@@ -113,7 +113,7 @@ export const Dashboard = ({ history }) => {
         messages: firebase.firestore.FieldValue.arrayUnion({
           sender: email,
           message: msg,
-          timestamp: Date(),
+          timestamp: moment().format('MMM Do YYYY, h:mm:ss a'),
           // Date().substring(16, 24), current time
           // Date().substring(4, 11), month day
         }),
@@ -140,7 +140,6 @@ export const Dashboard = ({ history }) => {
     console.log('message that will be sent', msg);
     setNewChatFormVisible(false);
 
-    // await
     await selectChat(chats.indexOf(specificChat));
     console.log('goToChat index', chats.indexOf(specificChat));
     //--------------------------
@@ -164,16 +163,22 @@ export const Dashboard = ({ history }) => {
           {
             message: chatObj.message,
             sender: email,
-            // adding timestamp
             timestamp: chatObj.timestamp,
           },
         ],
       });
     setNewChatFormVisible(false);
-    selectChat(chats.length - 1); // -1
+
+    const idArr = chats.map(_chat => _chat.users.sort().join(';'));
+    console.log('idArr', idArr);
+    console.log(docKey);
+    console.log(idArr.indexOf(docKey));
+    // await selectChat(chats.length - 1);
+    // selectChat(idArr.indexOf(docKey));
   };
 
   useEffect(() => {
+    const abortController = new AbortController();
     firebase.auth().onAuthStateChanged(async _user => {
       if (!_user) {
         history.push('/login');
@@ -191,10 +196,11 @@ export const Dashboard = ({ history }) => {
       }
     });
 
-    return function cleanup() {
-      console.log('cleaned up');
+    return () => {
+      console.log('aborting...');
+      abortController.abort();
     };
-  }, [history]);
+  }, [history, setEmail, setChats]);
   // selectedChat added as dependency for change in order to trigger a rerender and work correctly???
 
   if (email) {

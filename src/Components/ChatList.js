@@ -12,6 +12,7 @@ import {
   Button,
   ListItemIcon,
 } from '@material-ui/core';
+import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 import MessageIcon from '@material-ui/icons/Message';
 import CreateIcon from '@material-ui/icons/Create';
 import { NotificationImportant } from '@material-ui/icons';
@@ -55,11 +56,12 @@ const useStyles = makeStyles(theme => ({
     textShadow: '2px 2px 4px #000000',
     boxShadow: '2px 2px 4px #000000',
   },
-  time: {
+  selfIcon: {
     color: '#3F51B5',
-    position: 'absolute',
-    bottom: 0,
-    left: '60px',
+  },
+  friendIcon: {
+    color: '#9DA1C4',
+    transform: 'rotate(180deg)',
   },
   rootMobile: {
     backgroundColor: theme.palette.background.paper,
@@ -90,7 +92,7 @@ export const ChatList = ({
     col: null,
   });
 
-  const randoColor = () => Math.floor(Math.random() * Math.floor(255));
+  const randoColor = max => Math.floor(Math.random() * Math.floor(max));
 
   const deleteItem = e => {
     const conf = window.confirm('Are you sure you want to delete this chat?');
@@ -147,7 +149,9 @@ export const ChatList = ({
                     }}
                     className={classes.avatar}
                     style={{
-                      background: `rgb(${randoColor()},${randoColor()},${randoColor()})`,
+                      background: `rgb(${randoColor(70)},${randoColor(
+                        70
+                      )},${randoColor(255)})`,
                     }}
                     // style={{
                     //   background: `rgb(${miniVisible.col},${miniVisible.col},${miniVisible.col})`,
@@ -169,18 +173,18 @@ export const ChatList = ({
                     col={miniVisible.col}
                   />
                 ) : null}
-                <ListItemText
+                {/* <ListItemText
                   className={classes.time}
                   primary={
                     <Typography fontSize={4}>
                       {_chat.messages[_chat.messages.length - 1].timestamp
                         ? _chat.messages[
                             _chat.messages.length - 1
-                          ].timestamp.substring(4, 11)
+                          ].timestamp.substring(0, 13)
                         : null}
                     </Typography>
                   }
-                />
+                /> */}
                 <ListItemIcon>
                   <DeleteIcon
                     onClick={e => {
@@ -201,12 +205,20 @@ export const ChatList = ({
                   }
                   secondary={
                     <>
+                      <DoubleArrowIcon
+                        fontSize="small"
+                        className={
+                          userIsSender(_chat)
+                            ? classes.selfIcon
+                            : classes.friendIcon
+                        }
+                      />
                       <Typography component="span" color="textPrimary">
                         {_chat.messages[_chat.messages.length - 1].message
-                          .length > 20
+                          .length > 10
                           ? `${_chat.messages[
                               _chat.messages.length - 1
-                            ].message.substring(0, 20)} ...`
+                            ].message.substring(0, 8)}...`
                           : _chat.messages[_chat.messages.length - 1].message}
                       </Typography>
                     </>
@@ -283,6 +295,12 @@ export const ChatList = ({
                     col={miniVisible.col}
                   />
                 ) : null}
+                {/* <DoubleArrowIcon
+                  fontSize="small"
+                  className={
+                    userIsSender(_chat) ? classes.selfIcon : classes.friendIcon
+                  }
+                /> */}
                 <ListItemIcon>
                   <DeleteIcon
                     onClick={e => {

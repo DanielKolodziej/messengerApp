@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import moment from 'moment';
 import Proptypes from 'prop-types';
 
 const firebase = require('firebase');
@@ -101,8 +102,8 @@ export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
         : newChatSubmit({
             sendTo: username,
             message,
-            // adding timestamp
-            timestamp: Date(),
+            // adding timestamp Date() or moment()
+            timestamp: moment().format('MMM Do YYYY, h:mm:ss a'),
           });
     }
     setServerError('User does not exist or is sender');

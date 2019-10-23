@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMediaQuery } from 'react-responsive';
 import Proptypes from 'prop-types';
+import moment from 'moment';
 
 const useStyles = makeStyles({
   content: {
@@ -14,6 +15,7 @@ const useStyles = makeStyles({
     top: '50px',
     width: 'calc(100% - 300px)',
     position: 'absolute',
+    minWidth: '390px',
   },
 
   userSent: {
@@ -69,6 +71,7 @@ const useStyles = makeStyles({
     overflowY: 'scroll',
     top: '50px',
     width: 'calc(100% - 100px)',
+    minWidth: '390px',
     position: 'absolute',
   },
   chatHeaderMobile: {
@@ -121,11 +124,12 @@ export const ChatView = ({ chat, user }) => {
             }
           >
             {_msg.message}
-            {/* {`${_msg.message + _msg.timestamp}`} */}
             <div className={classes.time}>
-              {_msg.timestamp ? _msg.timestamp.substring(16, 24) : null}
+              {_msg.timestamp.substring(0, 13) !==
+              moment().format('MMM Do YYYY')
+                ? _msg.timestamp.substring(0, 13)
+                : _msg.timestamp.substring(15, 26)}
             </div>
-            {/* .substring(16, 24) */}
           </div>
         ))}
       </main>

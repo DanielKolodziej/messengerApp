@@ -168,13 +168,26 @@ export const Dashboard = ({ history }) => {
         ],
       });
     setNewChatFormVisible(false);
-
-    const idArr = chats.map(_chat => _chat.users.sort().join(';'));
+    const arr2 = chats;
+    arr2.push({
+      receiverHasRead: false,
+      users: [email, chatObj.sendTo],
+      messages: [
+        {
+          message: chatObj.message,
+          sender: email,
+          timestamp: chatObj.timestamp,
+        },
+      ],
+    });
+    console.log(arr2);
+    const idArr = arr2.map(_chat => _chat.users.sort().join(';'));
     console.log('idArr', idArr);
+    console.log('idArr sorted', idArr.sort());
     console.log(docKey);
-    console.log(idArr.indexOf(docKey));
+    console.log(idArr.sort().indexOf(docKey));
     // await selectChat(chats.length - 1);
-    // selectChat(idArr.indexOf(docKey));
+    selectChat(idArr.sort().indexOf(docKey));
   };
 
   useEffect(() => {

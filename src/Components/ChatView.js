@@ -107,11 +107,11 @@ export const ChatView = ({ chat, user }) => {
   }
   return (
     <div>
-      <div
+      {/* <div
         className={isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}
       >
         Your conversation with {chat.users.filter(_usr => _usr !== user)[0]}
-      </div>
+      </div> */}
       <main
         id="chatview-container"
         className={isNotMobile ? classes.content : classes.contentMobile}

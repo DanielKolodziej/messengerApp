@@ -46,6 +46,31 @@ const useStyles = makeStyles({
       boxShadow: '0px 0px 10px black',
     },
   },
+  // -------------------temp
+  chatHeader: {
+    width: 'calc(100% - 301px)',
+    height: '36px',
+    backgroundColor: '#344195',
+    position: 'fixed',
+    marginLeft: '301px',
+    fontSize: '18px',
+    textAlign: 'center',
+    color: 'white',
+    paddingTop: '10px',
+    boxSizing: 'border-box',
+  },
+  chatHeaderMobile: {
+    width: 'calc(100% - 101px)',
+    height: '36px',
+    backgroundColor: '#344195',
+    position: 'fixed',
+    marginLeft: '101px',
+    fontSize: '18px',
+    textAlign: 'center',
+    color: 'white',
+    paddingTop: '10px',
+    boxSizing: 'border-box',
+  },
 });
 
 export const Dashboard = ({ history }) => {
@@ -228,27 +253,29 @@ export const Dashboard = ({ history }) => {
           selectedChat={selectedChat}
           buildDocKey={buildDocKey}
         />
+        {/* temp */}
+
+        <div
+          className={
+            isNotMobile ? classes.chatHeader : classes.chatHeaderMobile
+          }
+        >
+          {chats[selectedChat]
+            ? `Your conversation with
+          ${chats[selectedChat].users.filter(_usr => _usr !== email)[0]}`
+            : `No chat selected...`}
+        </div>
+
+        {/* temp */}
         {newChatFormVisible ? null : (
           <ChatView user={email} chat={chats[selectedChat]} />
         )}
-        {!newChatFormVisible && chats.length < 1 ? (
-          <div
-            style={{
-              backgroundColor: 'blue',
-              color: 'white',
-              marginLeft: '300px',
-              textAlign: 'center',
-            }}
-          >
-            Select a conversation from the ChatList
-          </div>
-        ) : null}
         {/* {newChatFormVisible ? null : selectedChat ? (
           <ChatView user={email} chat={chats[selectedChat]} />
         ) : (
           <div>Select a message from the ChatList!</div>
         )} */}
-        {selectedChat !== null && !newChatFormVisible ? (
+        {chats[selectedChat] && !newChatFormVisible ? (
           <ChatTextbox
             submitMessage={submitMessage}
             selectedChat={selectedChat}

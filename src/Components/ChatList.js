@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { makeStyles } from '@material-ui/core/styles';
+import { pulse } from 'react-animations';
+import styled, { keyframes } from 'styled-components';
+
 import {
   List,
   ListItem,
@@ -71,10 +74,18 @@ const useStyles = makeStyles(theme => ({
     width: '100px',
     boxShadow: '0px 0px 2px black',
   },
+  noChat: {
+    textAlign: 'center',
+  },
 }));
 
 const firebase = require('firebase');
 
+// pulse animation
+const pulseAnimation = keyframes`${pulse}`;
+const PulseDiv = styled.div`
+  animation: 3s ${pulseAnimation} infinite;
+`;
 export const ChatList = ({
   chats,
   userEmail,
@@ -326,17 +337,31 @@ export const ChatList = ({
     // </MobileList> ;
   }
   return (
-    <div className={classes.root}>
-      <Button
-        variant="contained"
-        fullWidth
-        color="primary"
-        onClick={() => newChatBtnClicked()}
-        className={classes.newChatBtn}
-      >
-        New Message
-      </Button>
-      <List />
+    <div className={isNotMobile ? classes.root : classes.rootMobile}>
+      <PulseDiv>
+        <Button
+          variant="contained"
+          fullWidth
+          color="primary"
+          onClick={() => newChatBtnClicked()}
+          className={classes.newChatBtn}
+        >
+          {isNotMobile ? (
+            'New Message'
+          ) : (
+            <>
+              <CreateIcon fontSize="small" />
+              <MessageIcon />
+            </>
+          )}
+        </Button>
+      </PulseDiv>
+      <List>
+        <ListItemText
+          className={classes.noChat}
+          secondary="Currently no messages... Click the above button to start a new chat!"
+        />
+      </List>
     </div>
   );
 };

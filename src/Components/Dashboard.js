@@ -231,6 +231,23 @@ export const Dashboard = ({ history }) => {
         {newChatFormVisible ? null : (
           <ChatView user={email} chat={chats[selectedChat]} />
         )}
+        {!newChatFormVisible && chats.length < 1 ? (
+          <div
+            style={{
+              backgroundColor: 'blue',
+              color: 'white',
+              marginLeft: '300px',
+              textAlign: 'center',
+            }}
+          >
+            Select a conversation from the ChatList
+          </div>
+        ) : null}
+        {/* {newChatFormVisible ? null : selectedChat ? (
+          <ChatView user={email} chat={chats[selectedChat]} />
+        ) : (
+          <div>Select a message from the ChatList!</div>
+        )} */}
         {selectedChat !== null && !newChatFormVisible ? (
           <ChatTextbox
             submitMessage={submitMessage}

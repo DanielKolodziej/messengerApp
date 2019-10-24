@@ -7,7 +7,6 @@ import moment from 'moment';
 const useStyles = makeStyles({
   content: {
     height: 'calc(100vh - 100px)',
-    overflow: 'auto',
     padding: '25px',
     marginLeft: '300px',
     boxSizing: 'border-box',
@@ -15,7 +14,6 @@ const useStyles = makeStyles({
     top: '50px',
     width: 'calc(100% - 300px)',
     position: 'absolute',
-    minWidth: '390px',
   },
 
   userSent: {
@@ -44,18 +42,18 @@ const useStyles = makeStyles({
     borderRadius: '10px',
   },
 
-  chatHeader: {
-    width: 'calc(100% - 301px)',
-    height: '36px',
-    backgroundColor: '#344195',
-    position: 'fixed',
-    marginLeft: '301px',
-    fontSize: '18px',
-    textAlign: 'center',
-    color: 'white',
-    paddingTop: '10px',
-    boxSizing: 'border-box',
-  },
+  // chatHeader: {
+  //   width: 'calc(100% - 301px)',
+  //   height: '36px',
+  //   backgroundColor: '#344195',
+  //   position: 'fixed',
+  //   marginLeft: '301px',
+  //   fontSize: '18px',
+  //   textAlign: 'center',
+  //   color: 'white',
+  //   paddingTop: '10px',
+  //   boxSizing: 'border-box',
+  // },
   time: {
     float: 'right',
     color: 'black',
@@ -64,28 +62,26 @@ const useStyles = makeStyles({
 
   contentMobile: {
     height: 'calc(100vh - 100px)',
-    overflow: 'auto',
     padding: '25px',
     marginLeft: '100px',
     boxSizing: 'border-box',
     overflowY: 'scroll',
     top: '50px',
     width: 'calc(100% - 100px)',
-    minWidth: '390px',
     position: 'absolute',
   },
-  chatHeaderMobile: {
-    width: 'calc(100% - 101px)',
-    height: '36px',
-    backgroundColor: '#344195',
-    position: 'fixed',
-    marginLeft: '101px',
-    fontSize: '18px',
-    textAlign: 'center',
-    color: 'white',
-    paddingTop: '10px',
-    boxSizing: 'border-box',
-  },
+  // chatHeaderMobile: {
+  //   width: 'calc(100% - 101px)',
+  //   height: '36px',
+  //   backgroundColor: '#344195',
+  //   position: 'fixed',
+  //   marginLeft: '101px',
+  //   fontSize: '18px',
+  //   textAlign: 'center',
+  //   color: 'white',
+  //   paddingTop: '10px',
+  //   boxSizing: 'border-box',
+  // },
 });
 
 export const ChatView = ({ chat, user }) => {

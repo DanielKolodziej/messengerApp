@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
+import { useMediaQuery } from 'react-responsive';
 import Proptypes from 'prop-types';
 
 const firebase = require('firebase');
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     width: '350px',
     top: '50px',
-    left: 'calc(50% + 150px - 175px)',
+    left: 'calc(50% - 25px)',
   },
   input: {},
   form: {
@@ -47,9 +48,19 @@ const useStyles = makeStyles(theme => ({
     color: 'red',
     textAlign: 'center',
   },
+  paperMobile: {
+    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(
+      3
+    )}px`,
+    position: 'absolute',
+    width: '350px',
+    top: '50px',
+    left: 'calc(50% - 125px)',
+  },
 }));
 
 export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
+  const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
   const [username, setUsername] = useState(null);
@@ -112,7 +123,7 @@ export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
   return (
     <main className={classes.main}>
       <CssBaseline />
-      <Paper className={classes.paper}>
+      <Paper className={isNotMobile ? classes.paper : classes.paperMobile}>
         <Typography component="h1" variant="h5">
           Send a Message
         </Typography>

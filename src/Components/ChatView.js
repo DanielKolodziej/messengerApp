@@ -89,6 +89,7 @@ export const ChatView = ({ chat, user }) => {
   const classes = useStyles();
 
   useEffect(() => {
+    const abortController = new AbortController();
     // useEffect to scroll chatView window component to the bottom
     const container = document.getElementById('chatview-container');
     if (container) {
@@ -96,6 +97,11 @@ export const ChatView = ({ chat, user }) => {
       container.scrollTo(0, container.scrollHeight);
       // container.scrollIntoView(0, container.scrollHeight) //edge workaround?
     }
+
+    return () => {
+      console.log('aborting...');
+      abortController.abort();
+    };
   }, [chat]); // not 100% sure on the dependency but seems to be working
 
   if (chat === undefined) {

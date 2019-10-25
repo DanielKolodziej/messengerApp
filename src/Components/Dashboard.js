@@ -113,7 +113,6 @@ export const Dashboard = ({ history }) => {
   const selectChat = chatIndex => {
     console.log('selectedChat fired!');
     console.log('chatIndex in selectChat', chatIndex);
-    // console.log('selectedChat state', selectedChat);
     setSelectedChat(chatIndex);
 
     setNewChatFormVisible(false);
@@ -205,41 +204,83 @@ export const Dashboard = ({ history }) => {
         },
       ],
     });
-    console.log(arr2);
     const idArr = arr2.map(_chat => _chat.users.sort().join(';'));
-    console.log('idArr', idArr);
-    console.log('idArr sorted', idArr.sort());
-    console.log(docKey);
-    console.log(idArr.sort().indexOf(docKey));
-    // await selectChat(chats.length - 1);
     selectChat(idArr.sort().indexOf(docKey));
   };
 
+  // useEffect(() => {
+  //   const abortController = new AbortController();
+  //   firebase.auth().onAuthStateChanged(async _user => {
+  //     if (!_user) {
+  //       history.push('/login');
+  //     } else {
+  //       await firebase
+  //         .firestore()
+  //         .collection('chats')
+  //         .where('users', 'array-contains', _user.email)
+  //         .onSnapshot(async res => {
+  //           const chatsMap = res.docs.map(_doc => _doc.data());
+  //           console.log('res:', res.docs);
+  //           await setEmail(_user.email);
+  //           await setChats(chatsMap);
+  //         });
+  //     }
+  //   });
+
+  //   return () => {
+  //     abortController.abort();
+  //     console.log('aborting...');
+  //   };
+  // }, [history, setEmail, setChats]);
+
   useEffect(() => {
-    const abortController = new AbortController();
-    firebase.auth().onAuthStateChanged(async _user => {
+    let unsubscribeSnapshot;
+    const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
+      // you're not dealing with promises but streams so async/await is not needed here
       if (!_user) {
         history.push('/login');
       } else {
-        await firebase
+        unsubscribeSnapshot = firebase
           .firestore()
           .collection('chats')
           .where('users', 'array-contains', _user.email)
-          .onSnapshot(async res => {
+          .onSnapshot(res => {
             const chatsMap = res.docs.map(_doc => _doc.data());
             console.log('res:', res.docs);
-            await setEmail(_user.email);
-            await setChats(chatsMap);
+            setEmail(_user.email);
+            setChats(chatsMap);
           });
       }
     });
 
     return () => {
-      console.log('aborting...');
-      abortController.abort();
+      unsubscribeAuth();
+      unsubscribeSnapshot();
     };
-  }, [history, setEmail, setChats]);
-  // selectedChat added as dependency for change in order to trigger a rerender and work correctly???
+  }, [history]); // setters are stable between renders so you don't have to put them here
+  // useEffect(() => {
+  //   const abortController = new AbortController();
+  //   firebase.auth().onAuthStateChanged(async _user => {
+  //     if (!_user) {
+  //       history.push('/login');
+  //     } else {
+  //       const userChatSnapshot = await firebase
+  //         .firestore()
+  //         .collection('chats')
+  //         .where('users', 'array-contains', _user.email)
+  //         .get();
+
+  //       const chatsMap = userChatSnapshot.docs.map(_doc => _doc.data());
+  //       await setEmail(_user.email);
+  //       await setChats(chatsMap);
+  //     }
+  //   });
+
+  //   return () => {
+  //     abortController.abort();
+  //     console.log('aborting...');
+  //   };
+  // }, [history, setEmail, setChats]);
 
   if (email) {
     return (

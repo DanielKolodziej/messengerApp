@@ -89,20 +89,13 @@ export const ChatView = ({ chat, user }) => {
   const classes = useStyles();
 
   useEffect(() => {
-    const abortController = new AbortController();
     // useEffect to scroll chatView window component to the bottom
     const container = document.getElementById('chatview-container');
     if (container) {
-      // issue in microsoft edge
-      container.scrollTo(0, container.scrollHeight);
-      // container.scrollIntoView(0, container.scrollHeight) //edge workaround?
+      // works in edge, chrome, firefox
+      container.scrollTop = container.scrollHeight;
     }
-
-    return () => {
-      console.log('aborting...');
-      abortController.abort();
-    };
-  }, [chat]); // not 100% sure on the dependency but seems to be working
+  }, [chat]);
 
   if (chat === undefined) {
     return <main id="chatview-container" className={classes.content} />;

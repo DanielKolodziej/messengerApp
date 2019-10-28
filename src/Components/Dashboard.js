@@ -234,7 +234,7 @@ export const Dashboard = ({ history }) => {
   // }, [history, setEmail, setChats]);
 
   useEffect(() => {
-    let unsubscribeSnapshot;
+    let unsubscribeSnapshot = true;
     const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
       // you're not dealing with promises but streams so async/await is not needed here
       if (!_user) {
@@ -258,6 +258,7 @@ export const Dashboard = ({ history }) => {
       unsubscribeSnapshot();
     };
   }, [history]); // setters are stable between renders so you don't have to put them here
+
   // useEffect(() => {
   //   const abortController = new AbortController();
   //   firebase.auth().onAuthStateChanged(async _user => {

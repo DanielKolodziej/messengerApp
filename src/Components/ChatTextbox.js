@@ -6,6 +6,8 @@ import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
+import { messageValid } from '../lib/util';
+
 const useStyles = makeStyles({
   sendBtn: {
     color: 'blue',
@@ -44,7 +46,6 @@ export const ChatTextbox = ({ submitMessage, selectedChat, messageRead }) => {
 
   const [chatText, setChatText] = useState('');
 
-  const messageValid = txt => txt && txt.replace(/\s/g, '').length;
   const submitValidMessage = () => {
     if (messageValid(chatText)) {
       console.log('submitValidMessage fired!');

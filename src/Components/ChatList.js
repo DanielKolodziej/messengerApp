@@ -3,7 +3,6 @@ import { useMediaQuery } from 'react-responsive';
 import { makeStyles } from '@material-ui/core/styles';
 import { pulse } from 'react-animations';
 import styled, { keyframes } from 'styled-components';
-
 import {
   List,
   ListItem,
@@ -21,6 +20,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import { NotificationImportant } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from 'prop-types';
+import { randoColor, userIsSender } from '../lib/util';
 
 import { ChatListDetails } from './ChatListDetails';
 
@@ -103,8 +103,6 @@ export const ChatList = ({
     col: null,
   });
 
-  const randoColor = max => Math.floor(Math.random() * Math.floor(max));
-
   const deleteItem = e => {
     const conf = window.confirm('Are you sure you want to delete this chat?');
     const docKey = buildDocKey(
@@ -119,9 +117,6 @@ export const ChatList = ({
       console.log('item deleted...');
     }
   };
-
-  const userIsSender = chat =>
-    chat.messages[chat.messages.length - 1].sender === userEmail;
 
   if (chats.length > 0) {
     return isNotMobile ? (
@@ -219,7 +214,7 @@ export const ChatList = ({
                       <DoubleArrowIcon
                         fontSize="small"
                         className={
-                          userIsSender(_chat)
+                          userIsSender(_chat, userEmail)
                             ? classes.selfIcon
                             : classes.friendIcon
                         }
@@ -235,7 +230,8 @@ export const ChatList = ({
                     </>
                   }
                 />
-                {_chat.receiverHasRead === false && !userIsSender(_chat) ? (
+                {_chat.receiverHasRead === false &&
+                !userIsSender(_chat, userEmail) ? (
                   <ListItemIcon>
                     <NotificationImportant className={classes.unreadMessage} />
                   </ListItemIcon>
@@ -322,7 +318,8 @@ export const ChatList = ({
                   />
                 </ListItemIcon>
 
-                {_chat.receiverHasRead === false && !userIsSender(_chat) ? (
+                {_chat.receiverHasRead === false &&
+                !userIsSender(_chat, userEmail) ? (
                   <ListItemIcon>
                     <NotificationImportant className={classes.unreadMessage} />
                   </ListItemIcon>

@@ -10,6 +10,7 @@ import { ChatList } from './ChatList';
 import { ChatView } from './ChatView';
 import { ChatTextbox } from './ChatTextbox';
 import { NewChat } from './NewChat';
+import { clickedMessageWhereNotSender, buildDocKey } from '../lib/util';
 
 const firebase = require('firebase');
 
@@ -88,18 +89,15 @@ export const Dashboard = ({ history }) => {
     console.log('newChatBtnClicked fired!');
   };
 
-  const buildDocKey = friend => [email, friend].sort().join(';');
-
-  const clickedMessageWhereNotSender = chatIndex =>
-    chats[chatIndex].messages[chats[chatIndex].messages.length - 1].sender !==
-    email;
+  // const buildDocKey = friend => [email, friend].sort().join(';');
 
   const messageRead = ind => {
     const docKey = buildDocKey(
+      email,
       chats[ind].users.filter(_usr => _usr !== email)[0]
     );
 
-    if (clickedMessageWhereNotSender(ind)) {
+    if (clickedMessageWhereNotSender(ind, chats, email)) {
       firebase
         .firestore()
         .collection('chats')
@@ -126,6 +124,7 @@ export const Dashboard = ({ history }) => {
   const submitMessage = (msg, ind) => {
     console.log('submitMessage Fired!');
     const docKey = buildDocKey(
+      email,
       chats[ind].users.filter(_usr => _usr !== email)[0]
     );
 
@@ -174,7 +173,7 @@ export const Dashboard = ({ history }) => {
   const newChatSubmit = async chatObj => {
     console.log('newChatSubmit fired!');
     console.log('chatObj passed in', chatObj);
-    const docKey = buildDocKey(chatObj.sendTo);
+    const docKey = buildDocKey(email, chatObj.sendTo);
     console.log('docKey in newChatSubmit', docKey);
     await firebase
       .firestore()
@@ -208,31 +207,6 @@ export const Dashboard = ({ history }) => {
     selectChat(idArr.sort().indexOf(docKey));
   };
 
-  // useEffect(() => {
-  //   const abortController = new AbortController();
-  //   firebase.auth().onAuthStateChanged(async _user => {
-  //     if (!_user) {
-  //       history.push('/login');
-  //     } else {
-  //       await firebase
-  //         .firestore()
-  //         .collection('chats')
-  //         .where('users', 'array-contains', _user.email)
-  //         .onSnapshot(async res => {
-  //           const chatsMap = res.docs.map(_doc => _doc.data());
-  //           console.log('res:', res.docs);
-  //           await setEmail(_user.email);
-  //           await setChats(chatsMap);
-  //         });
-  //     }
-  //   });
-
-  //   return () => {
-  //     abortController.abort();
-  //     console.log('aborting...');
-  //   };
-  // }, [history, setEmail, setChats]);
-
   useEffect(() => {
     let unsubscribeSnapshot = true;
     const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
@@ -258,30 +232,6 @@ export const Dashboard = ({ history }) => {
       unsubscribeSnapshot();
     };
   }, [history]); // setters are stable between renders so you don't have to put them here
-
-  // useEffect(() => {
-  //   const abortController = new AbortController();
-  //   firebase.auth().onAuthStateChanged(async _user => {
-  //     if (!_user) {
-  //       history.push('/login');
-  //     } else {
-  //       const userChatSnapshot = await firebase
-  //         .firestore()
-  //         .collection('chats')
-  //         .where('users', 'array-contains', _user.email)
-  //         .get();
-
-  //       const chatsMap = userChatSnapshot.docs.map(_doc => _doc.data());
-  //       await setEmail(_user.email);
-  //       await setChats(chatsMap);
-  //     }
-  //   });
-
-  //   return () => {
-  //     abortController.abort();
-  //     console.log('aborting...');
-  //   };
-  // }, [history, setEmail, setChats]);
 
   if (email) {
     return (

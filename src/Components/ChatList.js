@@ -106,6 +106,7 @@ export const ChatList = ({
   const deleteItem = e => {
     const conf = window.confirm('Are you sure you want to delete this chat?');
     const docKey = buildDocKey(
+      userEmail,
       chats[e].users.filter(_usr => _usr !== userEmail)[0]
     );
     if (conf) {

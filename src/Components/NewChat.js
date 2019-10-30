@@ -13,6 +13,8 @@ import moment from 'moment';
 import { useMediaQuery } from 'react-responsive';
 import Proptypes from 'prop-types';
 
+import { buildDocKey } from '../lib/util';
+
 const firebase = require('firebase');
 
 const useStyles = makeStyles(theme => ({
@@ -84,10 +86,9 @@ export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
     console.log(`existance of receiving user: (${username}) `, exists);
     return exists;
   };
-  const buildDocKey = () =>
-    [firebase.auth().currentUser.email, username].sort().join(';');
+
   const chatExists = async () => {
-    const docKey = buildDocKey();
+    const docKey = buildDocKey(firebase.auth().currentUser.email, username);
     const chat = await firebase
       .firestore()
       .collection('chats')
@@ -109,7 +110,10 @@ export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
       // result from chatExists function
       const chatExist = await chatExists();
       return chatExist
-        ? goToChat(buildDocKey(), message)
+        ? goToChat(
+            buildDocKey(firebase.auth().currentUser.email, username),
+            message
+          )
         : newChatSubmit({
             sendTo: username,
             message,

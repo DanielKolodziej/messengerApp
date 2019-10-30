@@ -11,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Proptypes from 'prop-types';
 
+import { formIsValid } from '../lib/util';
+
 const firebase = require('firebase');
 
 const useStyles = makeStyles(theme => ({
@@ -66,7 +68,6 @@ export const Signup = ({ history }) => {
   });
   const [signupError, setSignupError] = useState('');
 
-  const formIsValid = () => signup.password === signup.passwordConfirmation;
   const handleInputChange = e => {
     const { name, value } = e.target;
 
@@ -77,7 +78,7 @@ export const Signup = ({ history }) => {
   const submitSignup = e => {
     e.preventDefault();
 
-    if (!formIsValid) {
+    if (!formIsValid(signup)) {
       setSignupError('Passwords do not match!');
       return;
     }

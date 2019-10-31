@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
+import { TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -125,38 +123,40 @@ export const Signup = ({ history }) => {
           Sign Up Page
         </Typography>
         <form onSubmit={e => submitSignup(e)} className={classes.form}>
-          <FormControl required fullWidth margin="normal">
-            <InputLabel htmlFor="sign-email-input">Enter your Email</InputLabel>
-            <Input
-              onChange={handleInputChange}
-              name="email"
-              autoComplete="email"
-              autoFocus
-              id="signup-email-input"
-            />
-          </FormControl>
-          <FormControl required fullWidth margin="normal">
-            <InputLabel htmlFor="signup-password-input">
-              Create a Password
-            </InputLabel>
-            <Input
-              onChange={handleInputChange}
-              name="password"
-              type="password"
-              id="signup-password-input"
-            />
-          </FormControl>
-          <FormControl required fullWidth margin="normal">
-            <InputLabel htmlFor="signup-password-confirmation-input">
-              Confirm Password
-            </InputLabel>
-            <Input
-              onChange={handleInputChange}
-              name="passwordConfirmation"
-              type="password"
-              id="signup-password-confirmation-input"
-            />
-          </FormControl>
+          <TextField
+            required
+            fullWidth
+            margin="normal"
+            onChange={handleInputChange}
+            name="email"
+            autoComplete="email"
+            autoFocus
+            label="Enter your Email"
+            id="sign-email-input"
+            variant="outlined"
+          />
+          <TextField
+            required
+            fullWidth
+            margin="normal"
+            onChange={handleInputChange}
+            name="password"
+            type="password"
+            label="Create a Password"
+            id="sign-password-input"
+            variant="outlined"
+          />
+          <TextField
+            required
+            fullWidth
+            margin="normal"
+            onChange={handleInputChange}
+            name="passwordConfirmation"
+            type="password"
+            label="Confirm Password"
+            id="signup-password-confirmation-input"
+            variant="outlined"
+          />
           <Button
             type="submit"
             fullWidth

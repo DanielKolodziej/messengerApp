@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
+import { TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -91,32 +89,30 @@ export const Login = ({ history }) => {
       <CssBaseline />
       <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
-          Log in
+          Login Form
         </Typography>
         <form className={classes.form} onSubmit={e => submitLogin(e)}>
-          <FormControl required fullWidth margin="normal">
-            <InputLabel htmlFor="login-email-input">
-              Enter your Email
-            </InputLabel>
-            <Input
-              onChange={handleInputChange}
-              name="email"
-              autoComplete="email"
-              autoFocus
-              id="login-email-input"
-            />
-          </FormControl>
-          <FormControl required fullWidth margin="normal">
-            <InputLabel htmlFor="login-password-input">
-              Enter your Password
-            </InputLabel>
-            <Input
-              onChange={handleInputChange}
-              name="password"
-              type="password"
-              id="login-password-input"
-            />
-          </FormControl>
+        <TextField
+            required
+            fullWidth
+            margin="normal"
+            onChange={handleInputChange}
+            name="email"
+            autoComplete="email"
+            autoFocus
+            label="Enter your Email"
+            id="login-email-input"
+          />
+        <TextField
+            required
+            fullWidth
+            margin="normal"
+            onChange={handleInputChange}
+            name="password"
+            type="password"
+            label="Enter your Password"
+            id="login-password-input"
+          />
           <Button
             type="submit"
             fullWidth
@@ -124,7 +120,7 @@ export const Login = ({ history }) => {
             color="primary"
             className={classes.submit}
           >
-            Log in
+            Sign in
           </Button>
         </form>
         {serverError ? (

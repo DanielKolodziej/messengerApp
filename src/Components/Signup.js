@@ -122,7 +122,7 @@ export const Signup = ({ history }) => {
         <Typography component="h1" variant="h5">
           Sign Up Page
         </Typography>
-        <form onSubmit={e => submitSignup(e)} className={classes.form}>
+        <form onSubmit={e => submitSignup(e)} className={classes.form} data-testid="form">
           <TextField
             required
             fullWidth

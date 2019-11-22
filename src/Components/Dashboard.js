@@ -208,7 +208,7 @@ export const Dashboard = ({ history }) => {
   };
 
   useEffect(() => {
-    let unsubscribeSnapshot = true;
+    let unsubscribeSnapshot;
     const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
       // you're not dealing with promises but streams so async/await is not needed here
       if (!_user) {

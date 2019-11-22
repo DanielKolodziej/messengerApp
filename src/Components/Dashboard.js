@@ -229,7 +229,8 @@ export const Dashboard = ({ history }) => {
 
     return () => {
       unsubscribeAuth();
-      unsubscribeSnapshot();
+      // eslint-disable-next-line no-unused-expressions
+      unsubscribeSnapshot && unsubscribeSnapshot();
     };
   }, [history]); // setters are stable between renders so you don't have to put them here
 

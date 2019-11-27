@@ -82,6 +82,7 @@ export const Dashboard = ({ history }) => {
   const [newChatFormVisible, setNewChatFormVisible] = useState(false);
   const [email, setEmail] = useState(null);
   const [chats, setChats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const newChatBtnClicked = () => {
     setNewChatFormVisible(true);
@@ -207,6 +208,37 @@ export const Dashboard = ({ history }) => {
     selectChat(idArr.sort().indexOf(docKey));
   };
 
+  // const getUserData = () => {
+  //   let unsubscribeSnapshot;
+  //   const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
+  //     // you're not dealing with promises but streams so async/await is not needed here
+  //     if (!_user) {
+  //       history.push('/login');
+  //     } else {
+  //       unsubscribeSnapshot = firebase
+  //         .firestore()
+  //         .collection('chats')
+  //         .where('users', 'array-contains', _user.email)
+  //         .onSnapshot(res => {
+  //           const chatsMap = res.docs.map(_doc => _doc.data());
+  //           console.log('res:', res.docs);
+  //           setEmail(_user.email);
+  //           setChats(chatsMap);
+  //           setLoading(false);
+  //         });
+  //     }
+  //   });
+
+  //   return () => {
+  //     unsubscribeAuth();
+  //     // eslint-disable-next-line no-unused-expressions
+  //     unsubscribeSnapshot && unsubscribeSnapshot();
+  //   };
+  // };
+
+  // useEffect(() => {
+  //   getUserData();
+  // }, [getUserData]);
   useEffect(() => {
     let unsubscribeSnapshot;
     const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
@@ -223,6 +255,7 @@ export const Dashboard = ({ history }) => {
             console.log('res:', res.docs);
             setEmail(_user.email);
             setChats(chatsMap);
+            setLoading(false);
           });
       }
     });
@@ -234,72 +267,69 @@ export const Dashboard = ({ history }) => {
     };
   }, [history]); // setters are stable between renders so you don't have to put them here
 
-  if (email) {
-    return (
-      <div id="dashboard-container">
-        <ChatList
-          history={history}
-          newChatBtnClicked={newChatBtnClicked}
-          selectChat={selectChat}
-          chats={chats}
-          userEmail={email}
-          selectedChat={selectedChat}
-          buildDocKey={buildDocKey}
-        />
-        {/* temp */}
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
+    // if (email) {
+    <div id="dashboard-container">
+      <ChatList
+        history={history}
+        newChatBtnClicked={newChatBtnClicked}
+        selectChat={selectChat}
+        chats={chats}
+        userEmail={email}
+        selectedChat={selectedChat}
+        buildDocKey={buildDocKey}
+      />
+      {/* temp */}
 
-        <div
-          className={
-            isNotMobile ? classes.chatHeader : classes.chatHeaderMobile
-          }
-        >
-          {chats[selectedChat]
-            ? `Your conversation with
+      <div
+        className={isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}
+      >
+        {chats[selectedChat]
+          ? `Your conversation with
           ${chats[selectedChat].users.filter(_usr => _usr !== email)[0]}`
-            : `No chat selected...`}
-        </div>
+          : `No chat selected...`}
+      </div>
 
-        {/* temp */}
-        {newChatFormVisible ? null : (
-          <ChatView user={email} chat={chats[selectedChat]} />
-        )}
-        {/* {newChatFormVisible ? null : selectedChat ? (
+      {/* temp */}
+      {newChatFormVisible ? null : (
+        <ChatView user={email} chat={chats[selectedChat]} />
+      )}
+      {/* {newChatFormVisible ? null : selectedChat ? (
           <ChatView user={email} chat={chats[selectedChat]} />
         ) : (
           <div>Select a message from the ChatList!</div>
         )} */}
-        {chats[selectedChat] && !newChatFormVisible ? (
-          <ChatTextbox
-            submitMessage={submitMessage}
-            selectedChat={selectedChat}
-            messageRead={messageRead}
-          />
-        ) : null}
-        {newChatFormVisible ? (
-          <NewChat
-            sender={email}
-            goToChat={goToChat}
-            newChatSubmit={newChatSubmit}
-          />
-        ) : null}
-        {isNotMobile ? (
-          <Button onClick={() => signOut()} className={classes.signOutBtn}>
-            {email.split('@')[0]}, Sign Out
-          </Button>
-        ) : (
-          <Button
-            onClick={() => signOut()}
-            className={classes.signOutBtnMobile}
-          >
-            <MeetingRoomIcon />
-            <ArrowBackIcon fontSize="small" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-  return <div>Loading...</div>;
+      {chats[selectedChat] && !newChatFormVisible ? (
+        <ChatTextbox
+          submitMessage={submitMessage}
+          selectedChat={selectedChat}
+          messageRead={messageRead}
+        />
+      ) : null}
+      {newChatFormVisible ? (
+        <NewChat
+          sender={email}
+          goToChat={goToChat}
+          newChatSubmit={newChatSubmit}
+        />
+      ) : null}
+      {isNotMobile ? (
+        <Button onClick={() => signOut()} className={classes.signOutBtn}>
+          {email.split('@')[0]}, Sign Out
+        </Button>
+      ) : (
+        <Button onClick={() => signOut()} className={classes.signOutBtnMobile}>
+          <MeetingRoomIcon />
+          <ArrowBackIcon fontSize="small" />
+        </Button>
+      )}
+    </div>
+  );
 };
+// return <div>Loading...</div>;
+// };
 
 Dashboard.propTypes = {
   history: Proptypes.object,

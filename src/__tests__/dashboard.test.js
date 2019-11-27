@@ -1,11 +1,22 @@
-import React from 'react';
-import { render, cleanup } from '@testing-library/react';
-
+import React, { useEffect } from 'react';
+import { render, cleanup, wait } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import axios from 'axios';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 import { Dashboard } from '../Components/Dashboard';
 
-afterEach(cleanup);
+// jest.mock('axios');
+// jest.mock('../Components/Dashboard', () => ({
+//   getUserData: jest.fn(() => )
+// }));
+// jest.mock(Dashboard.getUserData);
+
+afterEach(() => {
+  jest.resetAllMocks();
+  return cleanup;
+});
 const firebase = require('firebase');
 require('firebase/firestore');
 
@@ -21,21 +32,30 @@ firebase.initializeApp({
 //  Warning: <BrowserRouter> ignores the history prop. To use a custom history, use `import { Router }`
 // Arrange, Act, Assert
 describe('<Dashboard />', () => {
-  test('loads user dashboard', async () => {
+  test('loads and renders user dashboard', async () => {
     const history = createMemoryHistory({
       initialEntries: ['/dashboard'],
     });
+    const testInfo = { email: 'qwe@qwe.com' };
+    // axios.get.mockResolvedValueOnce(testInfo.email);
 
-    const { findByText } = render(
+    // Dashboard.getUserData.mockResolvedValueOnce(testInfo.email);
+
+    const { findByText, container, debug } = render(
       <Router history={history}>
         <Dashboard history={history} />
       </Router>
     );
-    // expect(history.location.pathname).toBe('/dashboard');
+    debug();
+    expect(history.location.pathname).toBe('/dashboard');
+    expect(container).toHaveTextContent(/loading/i);
+
+    // expect(Dashboard.getUserData).toHaveBeenCalledTimes(1);
+    // await wait(() => expect(container).toHaveTextContent(/out/i));
+    // const logBtn = await findByText(/out/i);
+
     // axios.get.mockImplementation(() => Promise.resolve(testInfo));
     // axios.get.mockResolvedValue(testInfo);
     // await wait(() => expect(container.textContent).toContain(/out/i));
-    // expect(container).toBeDefined();
-    // const signOutBtn = await waitForElement(() => findByText(/out/i));
   });
 });

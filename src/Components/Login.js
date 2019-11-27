@@ -79,6 +79,19 @@ export const Login = ({ history }) => {
       );
   };
 
+  const forgot = () => {
+    firebase
+      .auth()
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        setServerError(`Email was sent to: ${email}`);
+      })
+      .catch(err => {
+        setServerError(err.message);
+        console.log(err);
+      });
+  };
+
   const handleInputChange = e => {
     const { name, value } = e.target;
 
@@ -92,7 +105,7 @@ export const Login = ({ history }) => {
           Login Form
         </Typography>
         <form className={classes.form} onSubmit={e => submitLogin(e)}>
-        <TextField
+          <TextField
             required
             fullWidth
             margin="normal"
@@ -103,7 +116,7 @@ export const Login = ({ history }) => {
             label="Enter your Email"
             id="login-email-input"
           />
-        <TextField
+          <TextField
             required
             fullWidth
             margin="normal"
@@ -137,6 +150,9 @@ export const Login = ({ history }) => {
         </Typography>
         <Link className={classes.signUpLink} to="/signup">
           Sign up
+        </Link>
+        <Link onClick={forgot} className={classes.signUpLink}>
+          Forgot Password?
         </Link>
       </Paper>
     </main>

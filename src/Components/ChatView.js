@@ -15,6 +15,17 @@ const useStyles = makeStyles({
     width: 'calc(100% - 300px)',
     position: 'absolute',
   },
+  contentDark: {
+    backgroundColor: '#D3D3D3',
+    height: 'calc(100vh - 100px)',
+    padding: '25px',
+    marginLeft: '300px',
+    boxSizing: 'border-box',
+    overflowY: 'scroll',
+    top: '50px',
+    width: 'calc(100% - 300px)',
+    position: 'absolute',
+  },
 
   userSent: {
     float: 'left',
@@ -70,6 +81,17 @@ const useStyles = makeStyles({
     width: 'calc(100% - 100px)',
     position: 'absolute',
   },
+  contentMobileDark: {
+    backgroundColor: '#D3D3D3',
+    height: 'calc(100vh - 100px)',
+    padding: '25px',
+    marginLeft: '100px',
+    boxSizing: 'border-box',
+    overflowY: 'scroll',
+    top: '50px',
+    width: 'calc(100% - 100px)',
+    position: 'absolute',
+  },
   // chatHeaderMobile: {
   //   width: 'calc(100% - 101px)',
   //   height: '36px',
@@ -84,7 +106,7 @@ const useStyles = makeStyles({
   // },
 });
 
-export const ChatView = ({ chat, user }) => {
+export const ChatView = ({ chat, user, userInfo }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
@@ -98,7 +120,14 @@ export const ChatView = ({ chat, user }) => {
   }, [chat]);
 
   if (chat === undefined) {
-    return <main id="chatview-container" className={classes.content} />;
+    return (
+      <main
+        id="chatview-container"
+        className={
+          userInfo.darkModeStatus ? classes.contentDark : classes.content
+        }
+      />
+    );
   }
   return (
     <div>
@@ -135,4 +164,5 @@ export const ChatView = ({ chat, user }) => {
 ChatView.propTypes = {
   chat: Proptypes.object,
   user: Proptypes.string,
+  userInfo: Proptypes.object,
 };

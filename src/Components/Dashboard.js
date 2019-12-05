@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, MenuItem, MenuList, Paper } from '@material-ui/core';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import SettingsIcon from '@material-ui/icons/Settings';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import moment from 'moment';
 import Proptypes from 'prop-types';
 import { ChatList } from './ChatList';
 import { ChatView } from './ChatView';
 import { ChatTextbox } from './ChatTextbox';
 import { NewChat } from './NewChat';
+import { Settings } from './Settings';
 import { clickedMessageWhereNotSender, buildDocKey } from '../lib/util';
 
 const firebase = require('firebase');
 
 const useStyles = makeStyles({
-  signOutBtn: {
+  menuBtn: {
     position: 'absolute',
     bottom: '0px',
     left: '0px',
@@ -31,7 +33,7 @@ const useStyles = makeStyles({
       boxShadow: '0px 0px 10px black',
     },
   },
-  signOutBtnMobile: {
+  menuBtnMobile: {
     position: 'absolute',
     bottom: '0px',
     left: '0px',
@@ -72,6 +74,12 @@ const useStyles = makeStyles({
     paddingTop: '10px',
     boxSizing: 'border-box',
   },
+  menuDetails: {
+    position: 'absolute',
+    bottom: '36px',
+    left: '0px',
+    width: '300px',
+  },
 });
 
 export const Dashboard = ({ history }) => {
@@ -82,6 +90,13 @@ export const Dashboard = ({ history }) => {
   const [newChatFormVisible, setNewChatFormVisible] = useState(false);
   const [email, setEmail] = useState(null);
   const [chats, setChats] = useState([]);
+  const [userInfo, setUserInfo] = useState({
+    darkModeStatus: false,
+    avatarColor: '#007DC2',
+    name: null,
+  });
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [settingsVisible, setSettingsVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const newChatBtnClicked = () => {
@@ -122,6 +137,16 @@ export const Dashboard = ({ history }) => {
     firebase.auth().signOut();
   };
 
+  const handleMenuToggle = () => {
+    console.log('menu has toggled');
+    setMenuVisible(!menuVisible);
+  };
+
+  const handleSettingsToggle = () => {
+    console.log('settings menu has toggled');
+    setSettingsVisible(!settingsVisible);
+  };
+
   const submitMessage = (msg, ind) => {
     console.log('submitMessage Fired!');
     const docKey = buildDocKey(
@@ -138,8 +163,6 @@ export const Dashboard = ({ history }) => {
           sender: email,
           message: msg,
           timestamp: moment().format('MMM Do YYYY, h:mm:ss a'),
-          // Date().substring(16, 24), current time
-          // Date().substring(4, 11), month day
         }),
         receiverHasRead: false,
       });
@@ -148,26 +171,26 @@ export const Dashboard = ({ history }) => {
   const goToChat = async (docKey, msg) => {
     console.log('goToChat fired!');
     const usersInChat = docKey.split(';');
-    console.log('users in chat', usersInChat);
+    // console.log('users in chat', usersInChat);
     const specificChat = chats.find(_chat =>
       usersInChat.every(_user => _chat.users.includes(_user))
     );
-    console.log('All existant chats between user and others', chats);
-    console.log(
-      'Existant chat between user and specific receiver',
-      specificChat
-    );
-    console.log(
-      'Index of the specific chat from all chats',
-      chats.indexOf(specificChat)
-    );
-    console.log('message that will be sent', msg);
+    // console.log('All existant chats between user and others', chats);
+    // console.log(
+    //   'Existant chat between user and specific receiver',
+    //   specificChat
+    // );
+    // console.log(
+    //   'Index of the specific chat from all chats',
+    //   chats.indexOf(specificChat)
+    // );
+    // console.log('message that will be sent', msg);
     setNewChatFormVisible(false);
 
     await selectChat(chats.indexOf(specificChat));
-    console.log('goToChat index', chats.indexOf(specificChat));
+    // console.log('goToChat index', chats.indexOf(specificChat));
     //--------------------------
-    console.log('submitMessage called!');
+    // console.log('submitMessage called!');
     submitMessage(msg, chats.indexOf(specificChat));
   };
 
@@ -208,39 +231,9 @@ export const Dashboard = ({ history }) => {
     selectChat(idArr.sort().indexOf(docKey));
   };
 
-  // const getUserData = () => {
-  //   let unsubscribeSnapshot;
-  //   const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
-  //     // you're not dealing with promises but streams so async/await is not needed here
-  //     if (!_user) {
-  //       history.push('/login');
-  //     } else {
-  //       unsubscribeSnapshot = firebase
-  //         .firestore()
-  //         .collection('chats')
-  //         .where('users', 'array-contains', _user.email)
-  //         .onSnapshot(res => {
-  //           const chatsMap = res.docs.map(_doc => _doc.data());
-  //           console.log('res:', res.docs);
-  //           setEmail(_user.email);
-  //           setChats(chatsMap);
-  //           setLoading(false);
-  //         });
-  //     }
-  //   });
-
-  //   return () => {
-  //     unsubscribeAuth();
-  //     // eslint-disable-next-line no-unused-expressions
-  //     unsubscribeSnapshot && unsubscribeSnapshot();
-  //   };
-  // };
-
-  // useEffect(() => {
-  //   getUserData();
-  // }, [getUserData]);
   useEffect(() => {
     let unsubscribeSnapshot;
+    let unsubscribeSnapshot2;
     const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
       // you're not dealing with promises but streams so async/await is not needed here
       if (!_user) {
@@ -257,6 +250,20 @@ export const Dashboard = ({ history }) => {
             setChats(chatsMap);
             setLoading(false);
           });
+        unsubscribeSnapshot2 = firebase
+          .firestore()
+          .collection('users')
+          // .where('users', 'array-contains', _user.email)
+          .onSnapshot(res => {
+            const usersMap = res.docs
+              .filter(_doc => _doc.data().email === _user.email)
+              .map(_doc => _doc.data());
+            setUserInfo({
+              darkModeStatus: usersMap[0].dark,
+              avatarColor: usersMap[0].color,
+              name: usersMap[0].email,
+            });
+          });
       }
     });
 
@@ -264,6 +271,8 @@ export const Dashboard = ({ history }) => {
       unsubscribeAuth();
       // eslint-disable-next-line no-unused-expressions
       unsubscribeSnapshot && unsubscribeSnapshot();
+      // eslint-disable-next-line no-unused-expressions
+      unsubscribeSnapshot2 && unsubscribeSnapshot2();
     };
   }, [history]); // setters are stable between renders so you don't have to put them here
 
@@ -280,6 +289,7 @@ export const Dashboard = ({ history }) => {
         userEmail={email}
         selectedChat={selectedChat}
         buildDocKey={buildDocKey}
+        userInfo={userInfo}
       />
       {/* temp */}
 
@@ -294,7 +304,7 @@ export const Dashboard = ({ history }) => {
 
       {/* temp */}
       {newChatFormVisible ? null : (
-        <ChatView user={email} chat={chats[selectedChat]} />
+        <ChatView user={email} chat={chats[selectedChat]} userInfo={userInfo} />
       )}
       {/* {newChatFormVisible ? null : selectedChat ? (
           <ChatView user={email} chat={chats[selectedChat]} />
@@ -306,6 +316,7 @@ export const Dashboard = ({ history }) => {
           submitMessage={submitMessage}
           selectedChat={selectedChat}
           messageRead={messageRead}
+          userInfo={userInfo}
         />
       ) : null}
       {newChatFormVisible ? (
@@ -313,18 +324,50 @@ export const Dashboard = ({ history }) => {
           sender={email}
           goToChat={goToChat}
           newChatSubmit={newChatSubmit}
+          userInfo={userInfo}
         />
       ) : null}
       {isNotMobile ? (
-        <Button onClick={() => signOut()} className={classes.signOutBtn}>
-          {email.split('@')[0]}, Sign Out
+        // <Button onClick={() => signOut()} className={classes.signOutBtn}>
+        //   {email.split('@')[0]}, Sign Out
+        // </Button>
+        <Button onClick={() => handleMenuToggle()} className={classes.menuBtn}>
+          <AccountCircleIcon />
+          {email.split('@')[0]}
         </Button>
       ) : (
-        <Button onClick={() => signOut()} className={classes.signOutBtnMobile}>
-          <MeetingRoomIcon />
-          <ArrowBackIcon fontSize="small" />
+        <Button
+          onClick={() => handleMenuToggle()}
+          className={classes.menuBtnMobile}
+        >
+          <AccountCircleIcon />
         </Button>
+        // <Button onClick={() => signOut()} className={classes.menuBtnMobile}>
+        //   <MeetingRoomIcon />
+        //   <ArrowBackIcon fontSize="small" />
+        // </Button>
       )}
+      {menuVisible ? (
+        <Paper className={classes.menuDetails}>
+          <MenuList>
+            <MenuItem onClick={() => handleSettingsToggle()}>
+              <SettingsIcon />
+              Account Settings
+            </MenuItem>
+            <MenuItem onClick={() => signOut()}>
+              <MeetingRoomIcon />
+              Sign Out
+            </MenuItem>
+          </MenuList>
+        </Paper>
+      ) : null}
+      {/* {settingsVisible ? <Settings /> : null} */}
+      <Settings
+        open={settingsVisible}
+        onClose={handleSettingsToggle}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+      />
     </div>
   );
 };

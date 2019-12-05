@@ -33,6 +33,15 @@ const useStyles = makeStyles(theme => ({
     width: '300px',
     boxShadow: '0px 0px 2px black',
   },
+  rootDark: {
+    backgroundColor: '#3D3D3D',
+    height: 'calc(100% - 35px)',
+    position: 'absolute',
+    left: '0',
+    width: '300px',
+    boxShadow: '0px 0px 2px black',
+    color: 'white',
+  },
   listItem: {
     cursor: 'pointer',
   },
@@ -74,6 +83,14 @@ const useStyles = makeStyles(theme => ({
     width: '100px',
     boxShadow: '0px 0px 2px black',
   },
+  rootMobileDark: {
+    backgroundColor: '#3D3D3D',
+    height: 'calc(100% - 35px)',
+    position: 'absolute',
+    left: '0',
+    width: '100px',
+    boxShadow: '0px 0px 2px black',
+  },
   noChat: {
     textAlign: 'center',
   },
@@ -93,6 +110,7 @@ export const ChatList = ({
   selectChat,
   selectedChat,
   buildDocKey,
+  userInfo,
 }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
@@ -121,7 +139,9 @@ export const ChatList = ({
 
   if (chats.length > 0) {
     return isNotMobile ? (
-      <main className={classes.root}>
+      <main
+        className={userInfo.darkModeStatus ? classes.rootDark : classes.root}
+      >
         <Button
           onClick={() => newChatBtnClicked()}
           className={classes.newChatBtn}
@@ -155,14 +175,12 @@ export const ChatList = ({
                       });
                     }}
                     className={classes.avatar}
-                    style={{
-                      background: `rgb(${randoColor(70)},${randoColor(
-                        70
-                      )},${randoColor(255)})`,
-                    }}
                     // style={{
-                    //   background: `rgb(${miniVisible.col},${miniVisible.col},${miniVisible.col})`,
+                    //   background: `rgb(${randoColor(70)},${randoColor(
+                    //     70
+                    //   )},${randoColor(255)})`,
                     // }}
+                    style={{ background: userInfo.avatarColor }}
                     alt="Remy Sharp"
                   >
                     {
@@ -177,7 +195,8 @@ export const ChatList = ({
                     receiver={
                       _chat.users.filter(_user => _user !== userEmail)[0]
                     }
-                    col={miniVisible.col}
+                    col={userInfo.avatarColor}
+                    userInfo={userInfo}
                   />
                 ) : null}
                 {/* <ListItemText
@@ -195,7 +214,7 @@ export const ChatList = ({
                 <ListItemIcon>
                   <DeleteIcon
                     onClick={e => {
-                      e.stopPropagation();
+                      e.stopPropagation(); // stops from inheriting parent functions
                       deleteItem(_index);
                     }}
                     className={classes.del}
@@ -220,7 +239,12 @@ export const ChatList = ({
                             : classes.friendIcon
                         }
                       />
-                      <Typography component="span" color="textPrimary">
+                      {/* "textPrimary" */}
+                      <Typography
+                        component="span"
+                        color="inherit"
+                        // color={userInfo.darkModeStatus ? 'textPrimary' : 'red'}
+                      >
                         {_chat.messages[_chat.messages.length - 1].message
                           .length > 10
                           ? `${_chat.messages[
@@ -245,7 +269,11 @@ export const ChatList = ({
       </main>
     ) : (
       // <MobileList>
-      <div className={classes.rootMobile}>
+      <div
+        className={
+          userInfo.darkModeStatus ? classes.rootMobileDark : classes.rootMobile
+        }
+      >
         <Button
           onClick={() => newChatBtnClicked()}
           className={classes.newChatBtn}
@@ -301,6 +329,7 @@ export const ChatList = ({
                       _chat.users.filter(_user => _user !== userEmail)[0]
                     }
                     col={miniVisible.col}
+                    userInfo={userInfo}
                   />
                 ) : null}
                 {/* <DoubleArrowIcon
@@ -371,4 +400,5 @@ ChatList.propTypes = {
   selectedChat: PropTypes.number,
   newChatBtnClicked: PropTypes.func,
   buildDocKey: PropTypes.func,
+  userInfo: PropTypes.object,
 };

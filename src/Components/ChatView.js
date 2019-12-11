@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMediaQuery } from 'react-responsive';
 import Proptypes from 'prop-types';
@@ -11,20 +11,16 @@ const useStyles = makeStyles({
     marginLeft: '300px',
     boxSizing: 'border-box',
     overflowY: 'scroll',
-    top: '50px',
     width: 'calc(100% - 300px)',
-    position: 'absolute',
   },
   contentDark: {
-    backgroundColor: '#D3D3D3',
+    backgroundColor: '#3D3D3D',
     height: 'calc(100vh - 100px)',
     padding: '25px',
     marginLeft: '300px',
     boxSizing: 'border-box',
     overflowY: 'scroll',
-    top: '50px',
     width: 'calc(100% - 300px)',
-    position: 'absolute',
   },
 
   userSent: {
@@ -53,18 +49,6 @@ const useStyles = makeStyles({
     borderRadius: '10px',
   },
 
-  // chatHeader: {
-  //   width: 'calc(100% - 301px)',
-  //   height: '36px',
-  //   backgroundColor: '#344195',
-  //   position: 'fixed',
-  //   marginLeft: '301px',
-  //   fontSize: '18px',
-  //   textAlign: 'center',
-  //   color: 'white',
-  //   paddingTop: '10px',
-  //   boxSizing: 'border-box',
-  // },
   time: {
     float: 'right',
     color: 'black',
@@ -77,38 +61,23 @@ const useStyles = makeStyles({
     marginLeft: '100px',
     boxSizing: 'border-box',
     overflowY: 'scroll',
-    top: '50px',
     width: 'calc(100% - 100px)',
-    position: 'absolute',
   },
   contentMobileDark: {
-    backgroundColor: '#D3D3D3',
+    backgroundColor: '#3D3D3D',
     height: 'calc(100vh - 100px)',
     padding: '25px',
     marginLeft: '100px',
     boxSizing: 'border-box',
     overflowY: 'scroll',
-    top: '50px',
     width: 'calc(100% - 100px)',
-    position: 'absolute',
   },
-  // chatHeaderMobile: {
-  //   width: 'calc(100% - 101px)',
-  //   height: '36px',
-  //   backgroundColor: '#344195',
-  //   position: 'fixed',
-  //   marginLeft: '101px',
-  //   fontSize: '18px',
-  //   textAlign: 'center',
-  //   color: 'white',
-  //   paddingTop: '10px',
-  //   boxSizing: 'border-box',
-  // },
 });
 
 export const ChatView = ({ chat, user, userInfo }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
+  const [contentStyle, setContentStyle] = useState(classes.content);
 
   useEffect(() => {
     // useEffect to scroll chatView window component to the bottom
@@ -117,17 +86,28 @@ export const ChatView = ({ chat, user, userInfo }) => {
       // works in edge, chrome, firefox
       container.scrollTop = container.scrollHeight;
     }
-  }, [chat]);
+    if (userInfo.darkModeStatus && isNotMobile) {
+      setContentStyle(classes.contentDark);
+    } else if (userInfo.darkModeStatus && !isNotMobile) {
+      setContentStyle(classes.contentMobileDark);
+    } else if (!userInfo.darkModeStatus && !isNotMobile) {
+      setContentStyle(classes.contentMobile);
+    } else {
+      setContentStyle(classes.content);
+    }
+    // console.log(contentStyle);
+  }, [
+    chat,
+    classes.content,
+    classes.contentDark,
+    classes.contentMobile,
+    classes.contentMobileDark,
+    isNotMobile,
+    userInfo.darkModeStatus,
+  ]);
 
   if (chat === undefined) {
-    return (
-      <main
-        id="chatview-container"
-        className={
-          userInfo.darkModeStatus ? classes.contentDark : classes.content
-        }
-      />
-    );
+    return <main id="chatview-container" className={contentStyle} />;
   }
   return (
     <div>
@@ -138,7 +118,11 @@ export const ChatView = ({ chat, user, userInfo }) => {
       </div> */}
       <main
         id="chatview-container"
-        className={isNotMobile ? classes.content : classes.contentMobile}
+        // className={isNotMobile ? classes.content : classes.contentMobile}
+        // className={
+        //   userInfo.darkModeStatus ? classes.contentDark : classes.content
+        // }
+        className={contentStyle}
       >
         {chat.messages.map((_msg, _index) => (
           <div

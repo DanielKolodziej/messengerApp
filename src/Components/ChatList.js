@@ -175,11 +175,6 @@ export const ChatList = ({
                       });
                     }}
                     className={classes.avatar}
-                    // style={{
-                    //   background: `rgb(${randoColor(70)},${randoColor(
-                    //     70
-                    //   )},${randoColor(255)})`,
-                    // }}
                     style={{ background: userInfo.avatarColor }}
                     alt="Remy Sharp"
                   >
@@ -195,7 +190,6 @@ export const ChatList = ({
                     receiver={
                       _chat.users.filter(_user => _user !== userEmail)[0]
                     }
-                    col={userInfo.avatarColor}
                     userInfo={userInfo}
                   />
                 ) : null}
@@ -242,7 +236,8 @@ export const ChatList = ({
                       {/* "textPrimary" */}
                       <Typography
                         component="span"
-                        color="inherit"
+                        style={{ color: '#dcdcdc' }}
+                        // color="inherit"
                         // color={userInfo.darkModeStatus ? 'textPrimary' : 'red'}
                       >
                         {_chat.messages[_chat.messages.length - 1].message
@@ -308,12 +303,7 @@ export const ChatList = ({
                       });
                     }}
                     className={classes.avatar}
-                    style={{
-                      background: `rgb(${randoColor()},${randoColor()},${randoColor()})`,
-                    }}
-                    // style={{
-                    //   background: `rgb(${miniVisible.col},${miniVisible.col},${miniVisible.col})`,
-                    // }}
+                    style={{ background: userInfo.avatarColor }}
                     alt="Remy Sharp"
                   >
                     {

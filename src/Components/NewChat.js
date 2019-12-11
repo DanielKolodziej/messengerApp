@@ -38,7 +38,19 @@ const useStyles = makeStyles(theme => ({
     top: '50px',
     left: 'calc(50% - 25px)',
   },
-  input: {},
+  paperDark: {
+    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(
+      3
+    )}px`,
+    position: 'absolute',
+    width: '350px',
+    top: '50px',
+    left: 'calc(50% - 25px)',
+    backgroundColor: '#3D3D3D',
+    color: 'white',
+    boxShadow: '0 0 10px black',
+  },
+  inputDark: { color: 'white' },
   form: {
     width: '100%',
     marginTop: theme.spacing(),
@@ -59,9 +71,18 @@ const useStyles = makeStyles(theme => ({
     top: '50px',
     left: 'calc(50% - 125px)',
   },
+  paperMobileDark: {
+    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(
+      3
+    )}px`,
+    position: 'absolute',
+    width: '350px',
+    top: '50px',
+    left: 'calc(50% - 125px)',
+  },
 }));
 
-export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
+export const NewChat = ({ sender, goToChat, newChatSubmit, userInfo }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 });
   const classes = useStyles();
 
@@ -127,32 +148,40 @@ export const NewChat = ({ sender, goToChat, newChatSubmit }) => {
   return (
     <main className={classes.main}>
       <CssBaseline />
-      <Paper className={isNotMobile ? classes.paper : classes.paperMobile}>
+      {/* <Paper className={isNotMobile ? classes.paper : classes.paperMobile}> */}
+      <Paper
+        className={
+          userInfo.darkModeStatus ? classes.paperDark : classes.paperMobileDark
+        }
+      >
         <Typography component="h1" variant="h5">
           Send a Message
         </Typography>
         <form onSubmit={e => submitNewChat(e)} className={classes.form}>
           <FormControl fullWidth>
-            <InputLabel htmlFor="new-chat-username">
+            <InputLabel
+              htmlFor="new-chat-username"
+              style={{ color: '#dcdcdc' }}
+            >
               Enter your friend's email
             </InputLabel>
             <Input
               required
               name="username"
-              className={classes.input}
+              className={classes.inputDark}
               autoFocus
               onChange={handleInputChange}
               id="new-chat-username"
             />
           </FormControl>
           <FormControl fullWidth>
-            <InputLabel htmlFor="new-chat-message">
+            <InputLabel htmlFor="new-chat-message" style={{ color: '#dcdcdc' }}>
               Enter your message
             </InputLabel>
             <Input
               required
               name="message"
-              className={classes.input}
+              className={classes.inputDark}
               onChange={handleInputChange}
               id="new-chat-message"
             />
@@ -185,4 +214,5 @@ NewChat.propTypes = {
   sender: Proptypes.string,
   goToChat: Proptypes.func,
   newChatSubmit: Proptypes.func,
+  userInfo: Proptypes.object,
 };

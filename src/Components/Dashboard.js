@@ -255,13 +255,13 @@ export const Dashboard = ({ history }) => {
           .collection('users')
           // .where('users', 'array-contains', _user.email)
           .onSnapshot(res => {
-            const usersMap = res.docs
+            const userMap = res.docs
               .filter(_doc => _doc.data().email === _user.email)
               .map(_doc => _doc.data());
             setUserInfo({
-              darkModeStatus: usersMap[0].dark,
-              avatarColor: usersMap[0].color,
-              name: usersMap[0].email,
+              darkModeStatus: userMap[0].dark,
+              avatarColor: userMap[0].color,
+              name: userMap[0].email,
             });
           });
       }
@@ -318,7 +318,18 @@ export const Dashboard = ({ history }) => {
           messageRead={messageRead}
           userInfo={userInfo}
         />
-      ) : null}
+      ) : (
+        <div
+          style={{
+            height: '65px',
+            width: 'calc(100% - 300px)',
+            backgroundColor: '#3D3D3D',
+            position: 'absolute',
+            bottom: 0,
+            left: '300px',
+          }}
+        />
+      )}
       {newChatFormVisible ? (
         <NewChat
           sender={email}
@@ -332,7 +343,7 @@ export const Dashboard = ({ history }) => {
         //   {email.split('@')[0]}, Sign Out
         // </Button>
         <Button onClick={() => handleMenuToggle()} className={classes.menuBtn}>
-          <AccountCircleIcon />
+          <AccountCircleIcon style={{ color: userInfo.avatarColor }} />
           {email.split('@')[0]}
         </Button>
       ) : (
@@ -340,7 +351,7 @@ export const Dashboard = ({ history }) => {
           onClick={() => handleMenuToggle()}
           className={classes.menuBtnMobile}
         >
-          <AccountCircleIcon />
+          <AccountCircleIcon style={{ color: userInfo.avatarColor }} />
         </Button>
         // <Button onClick={() => signOut()} className={classes.menuBtnMobile}>
         //   <MeetingRoomIcon />

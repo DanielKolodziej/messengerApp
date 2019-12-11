@@ -151,7 +151,7 @@ export const Login = ({ history }) => {
         <Link className={classes.signUpLink} to="/signup">
           Sign up
         </Link>
-        <Link onClick={forgot} className={classes.signUpLink}>
+        <Link onClick={forgot} className={classes.signUpLink} to="/login">
           Forgot Password?
         </Link>
       </Paper>

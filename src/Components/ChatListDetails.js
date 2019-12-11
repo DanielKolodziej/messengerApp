@@ -15,10 +15,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const ChatListDetails = ({ receiver, col }) => {
+export const ChatListDetails = ({ receiver, userInfo }) => {
   const classes = useStyles();
   return (
-    <div className={classes.root} style={{ border: `2px solid ${col}` }}>
+    <div
+      className={classes.root}
+      style={{ border: `2px solid ${userInfo.avatarColor}` }}
+    >
       {receiver}
     </div>
   );
@@ -26,5 +29,6 @@ export const ChatListDetails = ({ receiver, col }) => {
 
 ChatListDetails.propTypes = {
   receiver: PropTypes.string,
-  col: PropTypes.number,
+  // col: PropTypes.number,
+  userInfo: PropTypes.object,
 };

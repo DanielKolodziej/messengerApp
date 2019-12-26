@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: '1',
     textIndent: '10px',
     paddingRight: '10px',
+    color: 'black',
   },
 }));
 
@@ -29,6 +30,5 @@ export const ChatListDetails = ({ receiver, userInfo }) => {
 
 ChatListDetails.propTypes = {
   receiver: PropTypes.string,
-  // col: PropTypes.number,
   userInfo: PropTypes.object,
 };

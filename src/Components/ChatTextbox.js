@@ -127,11 +127,8 @@ import { messageValid } from '../lib/util';
 
 const useStyles = makeStyles({
   sendBtn: {
-    // color: 'blue',
     color: '#227092',
     paddingTop: '16px',
-    // cursor: 'pointer',
-    // marginLeft: '-30px',
     textShadow: '0 0 20px #227092',
     '&:hover': {
       color: '#0069d9',
@@ -145,11 +142,8 @@ const useStyles = makeStyles({
     position: 'absolute',
     bottom: 0,
     left: '300px',
-    // bottom: '15px',
-    // left: '315px',
     boxSizing: 'border-box',
     overflow: 'auto',
-    // width: 'calc(100% - 300px - 50px)',
     width: 'calc(100% - 300px)',
   },
   chatTextBoxContainerDark: {
@@ -159,23 +153,18 @@ const useStyles = makeStyles({
     position: 'absolute',
     bottom: 0,
     left: '300px',
-    // bottom: '15px',
-    // left: '315px',
     boxSizing: 'border-box',
     overflow: 'auto',
-    // width: 'calc(100% - 300px - 50px)',
     width: 'calc(100% - 300px)',
     color: 'white',
   },
 
   chatTextBox: {
-    // width: 'calc(100% - 25px)',
     width: 'calc(100% - 60px)',
     paddingTop: '8px',
     paddingLeft: '16px',
   },
   chatTextBoxDark: {
-    // width: 'calc(100% - 25px)',
     width: 'calc(100% - 60px)',
     paddingTop: '8px',
     paddingLeft: '16px',
@@ -183,8 +172,6 @@ const useStyles = makeStyles({
     borderBottom: '2px solid #E3E3E3',
     '&:focus': {
       borderBottom: '2px solid red',
-      // color: 'red',
-      // backgroundColor: 'red',
     },
   },
 
@@ -228,7 +215,6 @@ export const ChatTextbox = ({
     if (messageValid(chatText)) {
       console.log('submitValidMessage fired!');
       submitMessage(chatText, selectedChat);
-      // setChatText('');
       document.getElementById('chattextbox').value = '';
     }
   };

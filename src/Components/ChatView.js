@@ -30,7 +30,8 @@ const useStyles = makeStyles({
     boxSizing: 'border-box',
     wordWrap: 'break-word',
     marginTop: '10px',
-    backgroundColor: '#707BC4',
+    // backgroundColor: '#707BC4',
+    backgroundColor: props => props.avatarColor,
     color: 'white',
     width: '300px',
     borderRadius: '10px',
@@ -76,7 +77,7 @@ const useStyles = makeStyles({
 
 export const ChatView = ({ chat, user, userInfo }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 });
-  const classes = useStyles();
+  const classes = useStyles(userInfo);
   const [contentStyle, setContentStyle] = useState(classes.content);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   InputLabel,
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
       3
     )}px`,
     position: 'absolute',
-    width: '350px',
+    width: '300px',
     top: '50px',
     left: 'calc(50% - 25px)',
   },
@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
       3
     )}px`,
     position: 'absolute',
-    width: '350px',
+    width: '300px',
     top: '50px',
     left: 'calc(50% - 25px)',
     backgroundColor: '#3D3D3D',
@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
       3
     )}px`,
     position: 'absolute',
-    width: '350px',
+    width: '320px',
     top: '50px',
     left: 'calc(50% - 125px)',
   },
@@ -76,9 +76,12 @@ const useStyles = makeStyles(theme => ({
       3
     )}px`,
     position: 'absolute',
-    width: '350px',
+    width: '320px',
     top: '50px',
     left: 'calc(50% - 125px)',
+    backgroundColor: '#3D3D3D',
+    color: 'white',
+    boxShadow: '0 0 10px black',
   },
 }));
 
@@ -89,6 +92,27 @@ export const NewChat = ({ sender, goToChat, newChatSubmit, userInfo }) => {
   const [username, setUsername] = useState(null);
   const [message, setMessage] = useState(null);
   const [serverError, setServerError] = useState('');
+  const [contentStyle, setContentStyle] = useState(classes.paper);
+
+  useEffect(() => {
+    if (userInfo.darkModeStatus && isNotMobile) {
+      setContentStyle(classes.paperDark);
+    } else if (userInfo.darkModeStatus && !isNotMobile) {
+      setContentStyle(classes.paperMobileDark);
+    } else if (!userInfo.darkModeStatus && !isNotMobile) {
+      setContentStyle(classes.paperMobile);
+    } else {
+      setContentStyle(classes.paper);
+    }
+    // console.log(contentStyle);
+  }, [
+    classes.paper,
+    classes.paperDark,
+    classes.paperMobile,
+    classes.paperMobileDark,
+    isNotMobile,
+    userInfo.darkModeStatus,
+  ]);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -147,12 +171,13 @@ export const NewChat = ({ sender, goToChat, newChatSubmit, userInfo }) => {
 
   return (
     <main className={classes.main}>
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       {/* <Paper className={isNotMobile ? classes.paper : classes.paperMobile}> */}
       <Paper
-        className={
-          userInfo.darkModeStatus ? classes.paperDark : classes.paperMobileDark
-        }
+        // className={
+        //   userInfo.darkModeStatus ? classes.paperDark : classes.paperMobileDark
+        // }
+        className={contentStyle}
       >
         <Typography component="h1" variant="h5">
           Send a Message
@@ -168,7 +193,9 @@ export const NewChat = ({ sender, goToChat, newChatSubmit, userInfo }) => {
             <Input
               required
               name="username"
-              className={classes.inputDark}
+              className={
+                userInfo.darkModeStatus ? classes.inputDark : classes.input
+              }
               autoFocus
               onChange={handleInputChange}
               id="new-chat-username"
@@ -181,7 +208,9 @@ export const NewChat = ({ sender, goToChat, newChatSubmit, userInfo }) => {
             <Input
               required
               name="message"
-              className={classes.inputDark}
+              className={
+                userInfo.darkModeStatus ? classes.inputDark : classes.input
+              }
               onChange={handleInputChange}
               id="new-chat-message"
             />

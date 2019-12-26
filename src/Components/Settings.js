@@ -8,7 +8,7 @@ import {
   Button,
 } from '@material-ui/core/';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import { ChromePicker } from 'react-color';
+import { ChromePicker, SliderPicker } from 'react-color';
 import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
@@ -17,16 +17,8 @@ const firebase = require('firebase');
 
 const useStyles = makeStyles({
   root: {
-    margin: '10px',
-    // backgroundColor: theme.palette.background.paper,
-    // position: 'absolute',
-    // width: '400px',
-    // height: '400px',
-    // left: '200px',
-    // top: '150px',
-    // boxShadow: '1px 1px 4px #000000',
-    // zIndex: '1',
-    // textIndent: '10px',
+    width: '220px',
+    padding: '0 16px 16px 16px',
   },
 });
 
@@ -68,7 +60,7 @@ export const Settings = ({ open, onClose, userInfo, setUserInfo }) => {
           label="Dark Mode"
         />
 
-        <FormControlLabel
+        {/* <FormControlLabel
           control={
             <ChromePicker
               name="avatarColor"
@@ -76,15 +68,25 @@ export const Settings = ({ open, onClose, userInfo, setUserInfo }) => {
               onChangeComplete={handleColorChange}
             />
           }
-          //   label={`Choose ${<AccountCircleIcon />} Color`}
           label={
             <AccountCircleIcon
               fontSize="large"
-              // style={{ color: state.avatarColor.hex }}
               style={{ color: userInfo.avatarColor }}
             />
           }
           labelPlacement="top"
+        /> */}
+        <AccountCircleIcon
+          fontSize="large"
+          style={{
+            color: userInfo.avatarColor,
+            margin: 'auto',
+          }}
+        />
+        <SliderPicker
+          name="avatarColor"
+          color={userInfo.avatarColor}
+          onChangeComplete={handleColorChange}
         />
       </FormGroup>
       <Button variant="contained" onClick={saveChange} color="primary">

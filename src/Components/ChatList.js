@@ -13,6 +13,7 @@ import {
   Divider,
   Button,
   ListItemIcon,
+  Grid,
 } from '@material-ui/core';
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 import MessageIcon from '@material-ui/icons/Message';
@@ -65,11 +66,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   avatar: {
+    backgroundColor: props => props.avatarColor,
     textShadow: '2px 2px 4px #000000',
     boxShadow: '2px 2px 4px #000000',
   },
   selfIcon: {
-    color: '#3F51B5',
+    // color: '#3F51B5',
+    color: props => props.avatarColor,
   },
   friendIcon: {
     color: '#9DA1C4',
@@ -94,6 +97,9 @@ const useStyles = makeStyles(theme => ({
   noChat: {
     textAlign: 'center',
   },
+  messagePreviewDark: {
+    color: '#dcdcdc',
+  },
 }));
 
 const firebase = require('firebase');
@@ -111,9 +117,10 @@ export const ChatList = ({
   selectedChat,
   buildDocKey,
   userInfo,
+  othersInfo,
 }) => {
   const isNotMobile = useMediaQuery({ minWidth: 650 });
-  const classes = useStyles();
+  const classes = useStyles(userInfo);
 
   const [miniVisible, setMiniVisible] = useState({
     show: false,
@@ -175,9 +182,11 @@ export const ChatList = ({
                       });
                     }}
                     className={classes.avatar}
-                    style={{ background: userInfo.avatarColor }}
                     alt="Remy Sharp"
                   >
+                    {/* {othersInfo
+                      ? othersInfo.forEach(_itm => console.log(_itm.color))
+                      : null} */}
                     {
                       _chat.users
                         .filter(_user => _user !== userEmail)[0]
@@ -193,18 +202,7 @@ export const ChatList = ({
                     userInfo={userInfo}
                   />
                 ) : null}
-                {/* <ListItemText
-                  className={classes.time}
-                  primary={
-                    <Typography fontSize={4}>
-                      {_chat.messages[_chat.messages.length - 1].timestamp
-                        ? _chat.messages[
-                            _chat.messages.length - 1
-                          ].timestamp.substring(0, 13)
-                        : null}
-                    </Typography>
-                  }
-                /> */}
+
                 <ListItemIcon>
                   <DeleteIcon
                     onClick={e => {
@@ -223,6 +221,36 @@ export const ChatList = ({
                           .substring(0, 20)}...`
                       : _chat.users.filter(_user => _user !== userEmail)[0]
                   }
+                  // secondary={
+                  //   <Grid container direction="row" alignItems="center">
+                  //     <Grid item>
+                  //       <DoubleArrowIcon
+                  //         className={
+                  //           userIsSender(_chat, userEmail)
+                  //             ? classes.selfIcon
+                  //             : classes.friendIcon
+                  //         }
+                  //       />
+                  //     </Grid>
+                  //     <Grid item>
+                  //       <Typography
+                  //         component="span"
+                  //         className={
+                  //           userInfo.darkModeStatus
+                  //             ? classes.messagePreviewDark
+                  //             : null
+                  //         }
+                  //       >
+                  //         {_chat.messages[_chat.messages.length - 1].message
+                  //           .length > 10
+                  //           ? `${_chat.messages[
+                  //               _chat.messages.length - 1
+                  //             ].message.substring(0, 8)}...`
+                  //           : _chat.messages[_chat.messages.length - 1].message}
+                  //       </Typography>
+                  //     </Grid>
+                  //   </Grid>
+                  // }
                   secondary={
                     <>
                       <DoubleArrowIcon
@@ -233,12 +261,13 @@ export const ChatList = ({
                             : classes.friendIcon
                         }
                       />
-                      {/* "textPrimary" */}
                       <Typography
                         component="span"
-                        style={{ color: '#dcdcdc' }}
-                        // color="inherit"
-                        // color={userInfo.darkModeStatus ? 'textPrimary' : 'red'}
+                        className={
+                          userInfo.darkModeStatus
+                            ? classes.messagePreviewDark
+                            : null
+                        }
                       >
                         {_chat.messages[_chat.messages.length - 1].message
                           .length > 10
@@ -318,16 +347,9 @@ export const ChatList = ({
                     receiver={
                       _chat.users.filter(_user => _user !== userEmail)[0]
                     }
-                    col={miniVisible.col}
                     userInfo={userInfo}
                   />
                 ) : null}
-                {/* <DoubleArrowIcon
-                  fontSize="small"
-                  className={
-                    userIsSender(_chat) ? classes.selfIcon : classes.friendIcon
-                  }
-                /> */}
                 <ListItemIcon>
                   <DeleteIcon
                     onClick={e => {
@@ -391,4 +413,5 @@ ChatList.propTypes = {
   newChatBtnClicked: PropTypes.func,
   buildDocKey: PropTypes.func,
   userInfo: PropTypes.object,
+  othersInfo: PropTypes.array,
 };

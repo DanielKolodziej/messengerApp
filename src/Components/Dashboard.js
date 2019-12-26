@@ -49,12 +49,10 @@ const useStyles = makeStyles({
       boxShadow: '0px 0px 10px black',
     },
   },
-  // -------------------temp
   chatHeader: {
     width: 'calc(100% - 301px)',
     height: '36px',
     backgroundColor: '#344195',
-    // position: 'fixed',
     marginLeft: '301px',
     fontSize: '18px',
     textAlign: 'center',
@@ -66,7 +64,6 @@ const useStyles = makeStyles({
     width: 'calc(100% - 101px)',
     height: '36px',
     backgroundColor: '#344195',
-    // position: 'fixed',
     marginLeft: '101px',
     fontSize: '18px',
     textAlign: 'center',
@@ -79,6 +76,22 @@ const useStyles = makeStyles({
     bottom: '36px',
     left: '0px',
     width: '300px',
+  },
+  filler: {
+    zIndex: '-1',
+    height: '65px',
+    width: '100%',
+    backgroundColor: 'white',
+    position: 'absolute',
+    bottom: 0,
+  },
+  fillerDark: {
+    zIndex: '-1',
+    height: '65px',
+    width: '100%',
+    backgroundColor: '#3D3D3D',
+    position: 'absolute',
+    bottom: 0,
   },
 });
 
@@ -95,6 +108,7 @@ export const Dashboard = ({ history }) => {
     avatarColor: '#007DC2',
     name: null,
   });
+  const [othersInfo, setOthersInfo] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -104,8 +118,6 @@ export const Dashboard = ({ history }) => {
     setSelectedChat(null);
     console.log('newChatBtnClicked fired!');
   };
-
-  // const buildDocKey = friend => [email, friend].sort().join(';');
 
   const messageRead = ind => {
     const docKey = buildDocKey(
@@ -234,6 +246,7 @@ export const Dashboard = ({ history }) => {
   useEffect(() => {
     let unsubscribeSnapshot;
     let unsubscribeSnapshot2;
+    let chatsMapUsers;
     const unsubscribeAuth = firebase.auth().onAuthStateChanged(_user => {
       // you're not dealing with promises but streams so async/await is not needed here
       if (!_user) {
@@ -248,6 +261,11 @@ export const Dashboard = ({ history }) => {
             console.log('res:', res.docs);
             setEmail(_user.email);
             setChats(chatsMap);
+            chatsMapUsers = chatsMap
+              .map(_doc => _doc.users)
+              .flat()
+              .filter(_doc => _doc !== _user.email);
+            console.log(chatsMapUsers);
             setLoading(false);
           });
         unsubscribeSnapshot2 = firebase
@@ -258,11 +276,20 @@ export const Dashboard = ({ history }) => {
             const userMap = res.docs
               .filter(_doc => _doc.data().email === _user.email)
               .map(_doc => _doc.data());
+            // const usersMap = res.docs
+            //   .map(_doc => _doc.data())
+            //   .filter(_usr => _usr.email !== _user.email);
+            const usersMap = res.docs
+              .map(_doc => _doc.data())
+              .filter(_usr => chatsMapUsers.includes(_usr.email));
+            console.log('userMap info...:', userMap);
+            console.log('usersMap info...:', usersMap);
             setUserInfo({
               darkModeStatus: userMap[0].dark,
               avatarColor: userMap[0].color,
               name: userMap[0].email,
             });
+            setOthersInfo(usersMap);
           });
       }
     });
@@ -279,7 +306,6 @@ export const Dashboard = ({ history }) => {
   return loading ? (
     <div>Loading...</div>
   ) : (
-    // if (email) {
     <div id="dashboard-container">
       <ChatList
         history={history}
@@ -290,8 +316,8 @@ export const Dashboard = ({ history }) => {
         selectedChat={selectedChat}
         buildDocKey={buildDocKey}
         userInfo={userInfo}
+        othersInfo={othersInfo}
       />
-      {/* temp */}
 
       <div
         className={isNotMobile ? classes.chatHeader : classes.chatHeaderMobile}
@@ -301,16 +327,9 @@ export const Dashboard = ({ history }) => {
           ${chats[selectedChat].users.filter(_usr => _usr !== email)[0]}`
           : `No chat selected...`}
       </div>
-
-      {/* temp */}
       {newChatFormVisible ? null : (
         <ChatView user={email} chat={chats[selectedChat]} userInfo={userInfo} />
       )}
-      {/* {newChatFormVisible ? null : selectedChat ? (
-          <ChatView user={email} chat={chats[selectedChat]} />
-        ) : (
-          <div>Select a message from the ChatList!</div>
-        )} */}
       {chats[selectedChat] && !newChatFormVisible ? (
         <ChatTextbox
           submitMessage={submitMessage}
@@ -320,14 +339,9 @@ export const Dashboard = ({ history }) => {
         />
       ) : (
         <div
-          style={{
-            height: '65px',
-            width: 'calc(100% - 300px)',
-            backgroundColor: '#3D3D3D',
-            position: 'absolute',
-            bottom: 0,
-            left: '300px',
-          }}
+          className={
+            userInfo.darkModeStatus ? classes.fillerDark : classes.filler
+          }
         />
       )}
       {newChatFormVisible ? (
@@ -339,9 +353,6 @@ export const Dashboard = ({ history }) => {
         />
       ) : null}
       {isNotMobile ? (
-        // <Button onClick={() => signOut()} className={classes.signOutBtn}>
-        //   {email.split('@')[0]}, Sign Out
-        // </Button>
         <Button onClick={() => handleMenuToggle()} className={classes.menuBtn}>
           <AccountCircleIcon style={{ color: userInfo.avatarColor }} />
           {email.split('@')[0]}
@@ -353,10 +364,6 @@ export const Dashboard = ({ history }) => {
         >
           <AccountCircleIcon style={{ color: userInfo.avatarColor }} />
         </Button>
-        // <Button onClick={() => signOut()} className={classes.menuBtnMobile}>
-        //   <MeetingRoomIcon />
-        //   <ArrowBackIcon fontSize="small" />
-        // </Button>
       )}
       {menuVisible ? (
         <Paper className={classes.menuDetails}>
@@ -372,7 +379,6 @@ export const Dashboard = ({ history }) => {
           </MenuList>
         </Paper>
       ) : null}
-      {/* {settingsVisible ? <Settings /> : null} */}
       <Settings
         open={settingsVisible}
         onClose={handleSettingsToggle}
@@ -382,8 +388,6 @@ export const Dashboard = ({ history }) => {
     </div>
   );
 };
-// return <div>Loading...</div>;
-// };
 
 Dashboard.propTypes = {
   history: Proptypes.object,
